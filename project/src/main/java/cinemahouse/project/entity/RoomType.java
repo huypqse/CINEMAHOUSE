@@ -9,9 +9,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
-@RequiredArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoomType extends AbstractEntity<Long>{

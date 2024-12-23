@@ -29,6 +29,5 @@ public class Cinema extends AbstractEntity<Long> {
             CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH
     }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "cinema_id")
     Set<ScreeningRoom> screeningRooms;
 }

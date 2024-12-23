@@ -10,12 +10,15 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Data
-@RequiredArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Bill extends AbstractEntity<Long>{
+@Table(name = "bill") // Explicitly specify the table name
+public class Bill extends AbstractEntity<Long> {
+
     @Column(name = "bill_date", nullable = false)
     LocalDate billDate;
 
@@ -29,7 +32,7 @@ public class Bill extends AbstractEntity<Long>{
     @Column(name = "status", nullable = false)
     BillStatus status;
 
-    @ManyToOne( cascade = {
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "user_id", nullable = false)
@@ -39,6 +42,4 @@ public class Bill extends AbstractEntity<Long>{
             CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     Set<Ticket> tickets;
-
-
 }

@@ -6,16 +6,17 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Data
-@RequiredArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Seat extends AbstractEntity<Long>{
-    @Column(name = "row", nullable = false)
+    @Column(name = "seat_row", nullable = false)
     String row;
 
-    @Column(name = "column", nullable = false)
+    @Column(name = "seat_column", nullable = false)
     Integer column;
 
     @Enumerated(EnumType.STRING)

@@ -11,11 +11,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
-@RequiredArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class Permission extends AbstractEntity<Long>{
     @Column(nullable = false, unique = true)
     String name;

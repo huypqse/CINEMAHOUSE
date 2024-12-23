@@ -8,8 +8,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Data
-@RequiredArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)

@@ -8,9 +8,10 @@ import lombok.*;
 import java.util.Set;
 
 @Entity
-@Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MovieType extends AbstractEntity<Long>{

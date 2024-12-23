@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -25,7 +25,6 @@ public class Comment extends AbstractEntity<Long> {
             CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH, CascadeType.DETACH
     }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     Set<User> users;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})

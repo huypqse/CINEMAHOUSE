@@ -5,10 +5,7 @@ import cinemahouse.project.entity.status.Gender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
@@ -17,16 +14,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @Table(name = "user", indexes = {
         @Index(name = "idx_user_email", columnList = "email"),
         @Index(name = "idx_user_username", columnList = "username"),
         @Index(name = "idx_user_email_username", columnList = "email, username")
 })
-@RequiredArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User extends AbstractEntity<String> {
+public class User extends AbstractEntity<Long> {
     // UserId from keycloak
     @Column(name = "user_id", nullable = false, unique = true, updatable = false, length = 36)
     String userId;
