@@ -35,54 +35,56 @@ public class EmailService {
     @Value("${spring.mail.username}")
     String emailFrom;
 
-    @Bean
-    private JavaMailSender javaMailSender() {
-        return new JavaMailSenderImpl();
-    }
-    JavaMailSenderImpl mailSender = (JavaMailSenderImpl) javaMailSender();
-    SpringTemplateEngine templateEngine;
+    private final JavaMailSender mailSender;
+    private final SpringTemplateEngine templateEngine;
+
     @Async
-    public void sendEmail(String subject, String content, List<String> toList) throws MessagingException,
-            UnsupportedEncodingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
+    public void sendEmail(String subject, String content, List<String> toList) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+            helper.setFrom(emailFrom, "CINEMAHOUSE");
+            helper.setTo(toList.toArray(new String[0]));
+            helper.setSubject(subject);
+            helper.setText(content, true);
 
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-        helper.setFrom(emailFrom, "Le Khanh Duc");
-        helper.setTo(toList.toArray(new String[0]));
-        helper.setSubject(subject);
-        helper.setText(content, true);
-
-        mailSender.send(mimeMessage);
+            mailSender.send(mimeMessage);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            log.error("Error sending email to {}: {}", toList, e.getMessage(), e);
+        }
     }
 
     @KafkaListener(topics = "notification-delivery")
-    public void sendEmailByKafka(NotificationEvent event)
-            throws MessagingException, UnsupportedEncodingException {
-        log.info("Received Kafka message to send email: {}", event);
+    public void sendEmailByKafka(NotificationEvent event) {
+        try {
+            log.info("Received Kafka message to send email: {}", event);
 
-        Context context = new Context();
-        context.setVariable("recipientName", event.getRecipient());
+            Context context = new Context();
+            context.setVariable("recipientName", event.getRecipient());
 
-        if (event.getParam() != null) {
-            context.setVariables(event.getParam());
-        } else {
-            log.warn("Event param is null, cannot set variables in email template.");
+            if (event.getParam() != null) {
+                context.setVariables(event.getParam());
+            } else {
+                log.warn("Event param is null, cannot set variables in email template.");
+            }
+
+            String htmlContent = templateEngine.process(event.getTemplateCode(), context);
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+
+            helper.setFrom(emailFrom, "Cinema House");
+            helper.setTo(event.getRecipient());
+            helper.setSubject(event.getSubject());
+            helper.setText(htmlContent, true);
+
+            mailSender.send(mimeMessage);
+            log.info("Email sent to {} successfully!", event.getRecipient());
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            log.error("Error sending email to {}: {}", event.getRecipient(), e.getMessage(), e);
         }
-
-        String htmlContent = templateEngine.process(event.getTemplateCode(), context);
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
-
-        helper.setFrom(emailFrom, "Cinema House");
-        helper.setTo(event.getRecipient());
-        helper.setSubject(event.getSubject());
-        helper.setText(htmlContent, true);
-
-        mailSender.send(mimeMessage);
-
-        log.info("Email sent to {} successfully!", event.getRecipient());
     }
-
-
-
 }
+
+
+
+

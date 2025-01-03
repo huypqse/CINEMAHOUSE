@@ -21,11 +21,24 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private final CustomJwtDecoder customJwtDecoder;
 
-    private final String[] PUBLIC_ENDPOINTS = {"/register"};
+    private static final String[] PUBLIC_ENDPOINT = {
+            "/api/v1/auth/token",
+            "/api/v1/user/register",
+            "/api/v1/auth/logout",
+            "/api/v1/auth/introspect",
+            "/api/v1/auth/refresh",
+            "/api/v1/auth/outbound/authentication",
+            "/api/v1/user/create-password",
+            "/api/v1/user/send-otp",
+            "/api/v1/user/reset-password",
+            "/api/v1/user/verify-otp",
+            "/api/v1/user/check-exists-user",
+            "/api/v1/user/send-otp-register"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINTS)
+        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINT)
                 .permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest()

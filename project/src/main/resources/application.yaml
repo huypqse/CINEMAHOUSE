@@ -10,14 +10,15 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: phuy61371@gmail.com
-    password: ivfjecbpuxndyehp
+    username: dangkhoipham80@gmail.com
+    password: vraj fjew eskg vnpv
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+
 
   datasource:
     url: jdbc:mysql://localhost:3307/CINEMAHOUSE

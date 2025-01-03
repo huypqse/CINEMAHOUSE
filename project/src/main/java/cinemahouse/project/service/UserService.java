@@ -159,7 +159,7 @@ public class UserService {
         StringBuilder content = new StringBuilder();
         content.append("<html>")
                 .append("<body style='font-family: Arial, sans-serif; line-height: 1.6;'>")
-                .append("<h2 style='color: #4CAF50;'>Welcome to DLearning!</h2>")
+                .append("<h2 style='color: #4CAF50;'>Welcome to CINEMA-HOUSE!</h2>")
                 .append("<p>Dear <strong>")
                 .append(request.getEmail())
                 .append("</strong>,</p>")
@@ -172,7 +172,7 @@ public class UserService {
                 .append("<p>If you did not request this code, please ignore this email. For your security, do not share this code with anyone.</p>")
                 .append("<br/>")
                 .append("<p>Best regards,</p>")
-                .append("<p><strong>DLearning Team</strong></p>")
+                .append("<p><strong>CINEMA-HOUSE Team</strong></p>")
                 .append("</body>")
                 .append("</html>");
 

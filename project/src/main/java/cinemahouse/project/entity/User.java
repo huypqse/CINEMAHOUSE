@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
