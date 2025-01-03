@@ -1,0 +1,65 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /cinemahouse
+
+spring:
+  application:
+    name: cinemahouse-service
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: phuy61371@gmail.com
+    password: ivfjecbpuxndyehp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  datasource:
+    url: jdbc:mysql://localhost:3307/CINEMAHOUSE
+    username: sa
+    password: 12345
+  kafka:
+    bootstrap-servers: localhost:9094
+    consumer:
+      group-id: my-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  jpa:
+      hibernate:
+        ddl-auto: update
+        properties:
+          hibernate:
+           dialect: org.hibernate.dialect.MySQLDialect
+outbound:
+    identity:
+      client-id: 1014016100667-asu46qq4b1qn8ms3hprim9i12kooavn0.apps.googleusercontent.com
+      client-secret: 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
+      redirect-uri: http://localhost:3000/authenticate
+
+jwt:
+    signerKey: 1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij
+    valid-duration: 360000
+    refreshable-duration: 360000
+
+
+
+
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

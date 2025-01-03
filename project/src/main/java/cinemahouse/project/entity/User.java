@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -16,6 +18,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @Table(name = "user", indexes = {
         @Index(name = "idx_user_email", columnList = "email"),
@@ -24,10 +27,8 @@ import java.util.Set;
 })
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User extends AbstractEntity<Long> {
-    // UserId from keycloak
-    @Column(name = "user_id", nullable = false, unique = true, updatable = false, length = 36)
-    String userId;
+public class User extends AbstractEntity<Long>  {
+
     @Column(name = "username", nullable = false, length = 50)
     String username;
     @Column(name= "gender", nullable = false)
@@ -62,4 +63,6 @@ public class User extends AbstractEntity<Long> {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "comment_id")
     Comment comment;
+
+
 }

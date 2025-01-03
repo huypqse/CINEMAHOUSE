@@ -1,6 +1,9 @@
-package cinemahouse.project.dto.identity;
+package cinemahouse.project.dto.response;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.util.List;
+import cinemahouse.project.entity.Role;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,12 +17,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserCreationParam {
-    boolean enabled;
+public class UserResponse {
     String email;
-    boolean emailVerified;
-    String username;
     String firstName;
     String lastName;
-    List<Credential> credentials;
+    LocalDate dob;
+    Boolean noPassword;
+    Set<Role> roles = new HashSet<>();
 }
