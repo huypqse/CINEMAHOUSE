@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -30,4 +32,7 @@ public class Seat extends AbstractEntity<Long>{
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, optional = false)
     @JoinColumn(name = "seat_type_id", nullable = false)
     SeatType seatType;
+
+    @OneToMany(mappedBy = "seat")
+    Set<Ticket> tickets;
 }

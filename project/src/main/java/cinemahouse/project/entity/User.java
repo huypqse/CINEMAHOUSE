@@ -31,7 +31,7 @@ public class User extends AbstractEntity<Long>  {
     String username;
     @Column(name= "gender", nullable = false)
     @Enumerated(EnumType.STRING)
-    Gender gender;
+    Gender gender = Gender.MALE;
     @Column(name = "phone_number", nullable = false, length = 15)
     String phoneNumber;
     @Column(name = "dob")
@@ -62,5 +62,20 @@ public class User extends AbstractEntity<Long>  {
     @JoinColumn(name = "comment_id")
     Comment comment;
 
+    @OneToMany(mappedBy = "user")
+    Set<Bill> bills;
+
+    @PrePersist
+    public void prePersist() {
+        if(account == null){
+            account = Account.ACTIVE;
+        }  if(gender == null) {
+            gender = Gender.MALE;
+        }  if (phoneNumber == null) {
+            phoneNumber = "";
+        } if (birthDate == null) {
+            birthDate = LocalDate.now();
+        }
+    }
 
 }
