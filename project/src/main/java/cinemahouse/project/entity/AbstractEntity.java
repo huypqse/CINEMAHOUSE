@@ -10,8 +10,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 @Getter
 @Setter
 @MappedSuperclass
@@ -31,13 +33,15 @@ public class AbstractEntity<T extends Serializable> implements Serializable {
     @LastModifiedBy
     String updateBy;
 
-    @Column(name = "create_at")
-    @CreationTimestamp
-    LocalDateTime createdAt;
-
-    @Column(name = "update_at")
-    @UpdateTimestamp
-    LocalDateTime updatedAt;
+////    @Field(type = FieldType.Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSS'Z'")
+//    @Column(name = "create_at")
+////    @CreationTimestamp
+//    LocalDate createdAt;
+//
+////    @Field(type = FieldType.Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSS'Z'")
+//    @Column(name = "update_at")
+////    @UpdateTimestamp
+//    LocalDate updatedAt;
 
 }
 // @MappedSuperclass trong Spring (đặc biệt là trong JPA/Hibernate)

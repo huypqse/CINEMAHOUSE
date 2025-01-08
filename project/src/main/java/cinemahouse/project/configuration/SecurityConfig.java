@@ -33,9 +33,15 @@ public class SecurityConfig {
             "/api/v1/user/reset-password",
             "/api/v1/user/verify-otp",
             "/api/v1/user/check-exists-user",
-            "/api/v1/user/send-otp-register"
-    };
+            "/api/v1/user/send-otp-register",
+            "/api/v1/movie/search",
+            "/api/v1/movie/search-version"
 
+
+    };
+//    private static final String[] PUBLIC_POST_ENDPOINT = {
+//
+//    };
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(PUBLIC_ENDPOINT)

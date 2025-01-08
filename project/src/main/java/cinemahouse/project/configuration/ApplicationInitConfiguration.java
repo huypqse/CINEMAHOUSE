@@ -1,12 +1,16 @@
 package cinemahouse.project.configuration;
 
 import cinemahouse.project.constant.PredefinedRole;
+import cinemahouse.project.entity.Movie;
 import cinemahouse.project.entity.Role;
 import cinemahouse.project.entity.User;
+import cinemahouse.project.entity.status.MovieStatus;
 import cinemahouse.project.exception.AppException;
 import cinemahouse.project.exception.ErrorCode;
+import cinemahouse.project.repository.MovieRepository;
 import cinemahouse.project.repository.RoleRepository;
 import cinemahouse.project.repository.UserRepository;
+import cinemahouse.project.repository.search.MovieSearchRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -46,7 +50,7 @@ public class ApplicationInitConfiguration {
             value = "datasource.driverClassName",
             havingValue = "com.mysql.cj.jdbc.Driver"
     )
-    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
+    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository, MovieRepository movieRepository, MovieSearchRepository movieSearchRepository) {
         log.info("Initializing application.....");
 
         return args -> {
@@ -64,7 +68,20 @@ public class ApplicationInitConfiguration {
                         .build());
             }
 
-
+//            Movie movie = Movie.builder()
+//                    .name("Doreamon")
+//                    .actors("Nobita")
+//                    .director(ADMIN_FULL_NAME)
+//                    .ageLimit(13)
+//                    .content("So funny")
+//                    .language("English")
+//                    .coverPhoto("jejej")
+//                    .startDate(LocalDate.now())
+//                    .releaseDate(LocalDate.now())
+//                    .status(MovieStatus.COMING_SOON)
+//                    .build();
+//            movieRepository.save(movie);
+//            movieSearchRepository.index(movie);
 
             if (userRepository.findByEmail(ADMIN_USER_NAME).isEmpty() && userRepository.findByEmail(USER_NAME).isEmpty()) {
                 Set<Role> roleADM = roleRepository.findByName(PredefinedRole.ADMIN_ROLE)
@@ -85,8 +102,10 @@ public class ApplicationInitConfiguration {
                         .roles(roleUser)
                         .birthDate(LocalDate.of(2004, 7, 20))
                         .build();
+
                 userRepository.save(admin);
                 userRepository.save(user);
+
                 log.warn("Admin user has been created with default password: 123456, please change it");
             }
             log.info("Application initialization completed .....");

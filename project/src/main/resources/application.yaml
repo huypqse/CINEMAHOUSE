@@ -6,7 +6,8 @@ server:
 spring:
   application:
     name: cinemahouse-service
-
+  main:
+    allow-bean-definition-overriding: true
   mail:
     host: smtp.gmail.com
     port: 587
@@ -18,13 +19,18 @@ spring:
           auth: true
           starttls:
             enable: true
-
+  elasticsearch:
+    uris: http://localhost:9200
 
   datasource:
     url: "jdbc:mysql://localhost:3307/CINEMAHOUSE"
     username: sa
     password: 12345
     driverClassName: "com.mysql.cj.jdbc.Driver"
+#  data:
+#    elasticsearch:
+#      repositories:
+#        enabled: true
 
   kafka:
     bootstrap-servers: localhost:9094

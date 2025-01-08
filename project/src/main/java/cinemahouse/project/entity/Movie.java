@@ -4,6 +4,7 @@ import cinemahouse.project.entity.status.MovieStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -16,15 +17,16 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Document(indexName = "movies")
 public class Movie extends AbstractEntity<Long>{
     @Column(nullable = false, name = "movie_name")
-    String movieName;
+    String name;
 
     @Column(nullable = false, name = "content")
     String content;
 
-    @Column(nullable = false, name = "duration")
-    Duration duration;
+    @Column(name = "duration")
+    LocalDate duration;
 
     @Column(nullable = false, name = "language")
     String language;
