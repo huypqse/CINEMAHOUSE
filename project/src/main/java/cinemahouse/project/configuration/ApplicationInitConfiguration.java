@@ -1,15 +1,14 @@
 package cinemahouse.project.configuration;
 
 import cinemahouse.project.constant.PredefinedRole;
-import cinemahouse.project.entity.Movie;
-import cinemahouse.project.entity.Role;
-import cinemahouse.project.entity.User;
+import cinemahouse.project.entity.*;
+import cinemahouse.project.entity.status.CinemaStatus;
 import cinemahouse.project.entity.status.MovieStatus;
+import cinemahouse.project.entity.status.RoomTypeStatus;
+import cinemahouse.project.entity.status.ScreeningRoomStatus;
 import cinemahouse.project.exception.AppException;
 import cinemahouse.project.exception.ErrorCode;
-import cinemahouse.project.repository.MovieRepository;
-import cinemahouse.project.repository.RoleRepository;
-import cinemahouse.project.repository.UserRepository;
+import cinemahouse.project.repository.*;
 import cinemahouse.project.repository.search.MovieSearchRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -48,9 +47,16 @@ public class ApplicationInitConfiguration {
     @ConditionalOnProperty(
             prefix = "spring",
             value = "datasource.driverClassName",
-            havingValue = "com.mysql.cj.jdbc.Driver"
+            havingValue = "org.postgresql.Driver"
     )
-    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository, MovieRepository movieRepository, MovieSearchRepository movieSearchRepository) {
+    ApplicationRunner applicationRunner(UserRepository userRepository,
+                                        RoleRepository roleRepository,
+                                        MovieRepository movieRepository,
+                                        MovieSearchRepository movieSearchRepository,
+                                        CinemaRepository cinemaRepository,
+                                        ScreeningRoomRepository screeningRoomRepository,
+                                        RoomTypeRepository roomTypeRepository) {
+
         log.info("Initializing application.....");
 
         return args -> {
@@ -68,20 +74,54 @@ public class ApplicationInitConfiguration {
                         .build());
             }
 
-//            Movie movie = Movie.builder()
-//                    .name("Doreamon")
-//                    .actors("Nobita")
-//                    .director(ADMIN_FULL_NAME)
-//                    .ageLimit(13)
-//                    .content("So funny")
-//                    .language("English")
-//                    .coverPhoto("jejej")
-//                    .startDate(LocalDate.now())
-//                    .releaseDate(LocalDate.now())
-//                    .status(MovieStatus.COMING_SOON)
-//                    .build();
-//            movieRepository.save(movie);
-//            movieSearchRepository.index(movie);
+            Movie movie = Movie.builder()
+                    .name("Interstellar")
+                    .actors("Matthew McConaughey, Anne Hathaway, Jessica Chastain")
+                    .director("Christopher Nolan")
+                    .ageLimit(12)
+                    .content("A visually stunning and emotionally gripping story of space exploration and the bond between a father and his daughter.")
+                    .language("English")
+                    .coverPhoto("https://example.com/interstellar.jpg") // Replace with an actual URL if needed
+                    .startDate(LocalDate.of(2014, 10, 26)) // Original premiere date
+                    .releaseDate(LocalDate.of(2014, 11, 7))
+                    .status(MovieStatus.COMING_SOON)
+                    .build();
+            movieRepository.save(movie);
+            movieSearchRepository.index(movie);
+
+            Movie film = Movie.builder()
+                    .name("The Dark Knight")
+                    .actors("Christian Bale, Heath Ledger, Gary Oldman, Morgan Freeman")
+                    .director("Christopher Nolan")
+                    .ageLimit(13)
+                    .content("Batman faces the Joker, a criminal mastermind who seeks to create chaos in Gotham City.")
+                    .language("English")
+                    .coverPhoto("https://example.com/dark-knight.jpg") // Replace with actual URL
+                    .startDate(LocalDate.of(2008, 6, 18)) // Premiere date
+                    .releaseDate(LocalDate.of(2008, 7, 18))
+                    .status(MovieStatus.COMING_SOON)
+                    .build();
+            movieRepository.save(film);
+            movieSearchRepository.index(film);
+
+            Cinema cinema = Cinema.builder()
+                    .name("CGV Vincom Center")
+                    .address("72 Lê Thánh Tôn, Quận 1, TP.HCM")
+                    .cinemaStatus(CinemaStatus.Open)
+                    .build();
+            cinemaRepository.save(cinema);
+            RoomType roomType = RoomType.builder()
+                    .name("VIP")
+                    .status(RoomTypeStatus.VIP)
+                    .build();
+            roomTypeRepository.save(roomType);
+            ScreeningRoom screeningRoom = ScreeningRoom.builder()
+                    .name("Room 1")
+                    .cinema(cinema)
+                    .screeningRoomStatus(ScreeningRoomStatus.Available)
+                    .roomType(roomType)
+                    .build();
+            screeningRoomRepository.save(screeningRoom);
 
             if (userRepository.findByEmail(ADMIN_USER_NAME).isEmpty() && userRepository.findByEmail(USER_NAME).isEmpty()) {
                 Set<Role> roleADM = roleRepository.findByName(PredefinedRole.ADMIN_ROLE)

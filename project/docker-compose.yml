@@ -1,5 +1,50 @@
-version: "3"
+version: "3.8"
 services:
+  cinemahouse_app:
+    image: cinemahouse:latest
+    container_name: cinemahouse_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9090:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/cinemahouse
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=12345
+    networks:
+      - lms-network
+    depends_on:
+      - postgres
+      - kafka
+      - elasticsearch
+    volumes:
+      - ../src/main/resources/static/templates/material:/app/material
+    restart: always
+
+  postgres:
+    image: postgres:16
+    container_name: lms_postgres
+    environment:
+      - POSTGRES_DB=cinemahouse
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD=12345
+    ports:
+      - "15432:5432"
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data
+    networks:
+      - lms-network
+    restart: always
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - lms-network
+    restart: always
   kafka:
     image: 'bitnami/kafka:3.7.0'
     container_name: kafka
@@ -32,5 +77,8 @@ services:
       timeout: 10s
       retries: 10
 
+networks:
+  lms-network:
+    driver: bridge
 
 

@@ -1,5 +1,5 @@
 server:
-  port: 9090
+  port: 8080
   servlet:
     context-path: /cinemahouse
 
@@ -22,11 +22,14 @@ spring:
   elasticsearch:
     uris: http://localhost:9200
 
+
+
   datasource:
-    url: "jdbc:mysql://localhost:3307/CINEMAHOUSE"
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:15432/cinemahouse"
     username: sa
     password: 12345
-    driverClassName: "com.mysql.cj.jdbc.Driver"
+
 #  data:
 #    elasticsearch:
 #      repositories:
@@ -41,11 +44,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   jpa:
-      hibernate:
-        ddl-auto: update
-        properties:
-          hibernate:
-           dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update  # Hoặc 'create-drop' tùy theo yêu cầu
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 outbound:
     identity:
       client-id: 1014016100667-asu46qq4b1qn8ms3hprim9i12kooavn0.apps.googleusercontent.com
@@ -70,3 +72,4 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+

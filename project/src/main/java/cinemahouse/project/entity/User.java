@@ -18,7 +18,7 @@ import java.util.Set;
 @Setter
 @Builder
 @AllArgsConstructor
-@Table(name = "user", indexes = {
+@Table(name = "account", indexes = {
         @Index(name = "idx_user_email", columnList = "email"),
         @Index(name = "idx_user_username", columnList = "username"),
         @Index(name = "idx_user_email_username", columnList = "email, username")
