@@ -165,7 +165,7 @@ public class ApplicationInitConfiguration {
             }
 
             ScreeningRoom screeningRoom = ScreeningRoom.builder()
-                    .name("Room 1")
+                    .name("Room 2")
                     .cinema(cinemaRepository.findByName(CINEMA_NAME).orElseThrow(() -> new AppException(ErrorCode.CINEMA_NOT_EXISTED)))
                     .screeningRoomStatus(ScreeningRoomStatus.Available)
                     .roomType(roomTypeRepository.findByName(ROOM_TYPE_VIP).orElseThrow(() -> new AppException(ErrorCode.ROOMTYPE_VIP__NOT_EXISTED)))
