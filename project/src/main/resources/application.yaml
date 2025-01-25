@@ -48,6 +48,8 @@ spring:
       ddl-auto: update  # Hoặc 'create-drop' tùy theo yêu cầu
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
 outbound:
     identity:
       client-id: 1014016100667-asu46qq4b1qn8ms3hprim9i12kooavn0.apps.googleusercontent.com
@@ -60,7 +62,11 @@ jwt:
     refreshable-duration: 360000
 
 
-
+integration:
+  minio:
+    access-key: admin
+    secret-key: admin@2025
+    url: http://localhost:9000 # Updated for Docker
 
 
 logging:

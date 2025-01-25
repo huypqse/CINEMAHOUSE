@@ -22,6 +22,6 @@ public class MovieType extends AbstractEntity<Long>{
     @Column(nullable = false, name = "movie_type_status")
     MovieTypeStatus movieTypeStatus;
 
-    @ManyToMany(mappedBy = "movieTypes", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "movieTypes")
     Set<Movie> movies;
 }

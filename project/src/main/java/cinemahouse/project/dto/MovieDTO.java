@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -16,14 +17,14 @@ import java.time.LocalDate;
 public class MovieDTO {
     String name;
     String content;
-    Duration duration;
-    String language;
-    String director;
-    String actors;
-    Integer ageLimit;
-    String coverPhoto;
-   LocalDate releaseDate;
-    LocalDate startDate;
-    MovieStatus status;
+//    Duration duration;
+   // String language;
+//    String director;
+//    String actors;
+//    Integer ageLimit;
+   MultipartFile coverPhoto;
+//   LocalDate releaseDate;
+//    LocalDate startDate;
+//    MovieStatus status;
 
 }

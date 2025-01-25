@@ -35,7 +35,8 @@ public class SecurityConfig {
             "/api/v1/user/check-exists-user",
             "/api/v1/user/send-otp-register",
             "/api/v1/movie/search",
-            "/api/v1/movie/search-version"
+            "/api/v1/movie/search-version",
+            "/api/v1/movie",
 
 
     };

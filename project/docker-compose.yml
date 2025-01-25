@@ -24,7 +24,7 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: lms_postgres
+    container_name: cinemahouse_postgres
     environment:
       - POSTGRES_DB=cinemahouse
       - POSTGRES_USER=sa
@@ -76,9 +76,27 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+  minio:
+    image: bitnami/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin@2025
+    volumes:
+      - ./data:/bitnami/minio/data
+      - ./config:/opt/bitnami/minio/config
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    command: minio server /bitnami/minio/data --console-address ":9001"
 
 networks:
   lms-network:
     driver: bridge
+volumes:
+  data:
+    driver: local
+  config:
+    driver: local
 
 

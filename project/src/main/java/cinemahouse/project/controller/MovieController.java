@@ -2,6 +2,7 @@ package cinemahouse.project.controller;
 
 import cinemahouse.project.dto.ApiResponse;
 import cinemahouse.project.dto.CriteriaObject;
+import cinemahouse.project.dto.MovieDTO;
 import cinemahouse.project.dto.request.MovieFilterRequest;
 import cinemahouse.project.dto.response.PageResponse;
 import cinemahouse.project.entity.Movie;
@@ -13,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -48,4 +50,13 @@ public class MovieController {
                 .result(result)
                 .build();
     }
+    @PostMapping( consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<Movie> addMovie(@Valid MovieDTO movie) {
+        Movie result = movieService.createMovie(movie);
+        return ApiResponse.<Movie>builder()
+                .code(HttpStatus.OK.value())
+                .result(result)
+                .build();
+    }
+
 }

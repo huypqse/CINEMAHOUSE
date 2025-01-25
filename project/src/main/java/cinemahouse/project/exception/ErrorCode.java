@@ -21,8 +21,12 @@ public enum ErrorCode {
     UNAUTHENTICATED(401, "You need to log in to perform this action.", HttpStatus.UNAUTHORIZED),
     INVALID_OTP(400, "OTP is invalid or expired", HttpStatus.BAD_REQUEST),
     PASSWORD_EXISTED(409, "Password existed", HttpStatus.CONFLICT),
+    UNABLE_UPLOAD_FILE(400, "Unable to upload file", HttpStatus.BAD_REQUEST),
+    UNABLE_DOWNLOAD_FILE(400, "Unable to download file", HttpStatus.BAD_REQUEST),
+    CINEMA_NOT_EXISTED(400, "Cinema not existed", HttpStatus.BAD_REQUEST),
+    ROOMTYPE_VIP__NOT_EXISTED(400, "Roomtype vip not existed", HttpStatus.BAD_REQUEST),
 
-            ;
+    ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

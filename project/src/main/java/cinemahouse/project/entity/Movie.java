@@ -40,7 +40,7 @@ public class Movie extends AbstractEntity<Long>{
     @Column(nullable = false, name = "age_limit")
     Integer ageLimit;
 
-    @Column(nullable = false, name = "cover_photo")
+    @Column(nullable = false, name = "cover_photo",  columnDefinition = "text")
     String coverPhoto;
 
     @Column(nullable = false, name = "release_date")
@@ -53,7 +53,7 @@ public class Movie extends AbstractEntity<Long>{
     @Column(nullable = false, name = "status")
     MovieStatus status;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "movie_typeofmovies",
             joinColumns = @JoinColumn(name = "movie_id"),
