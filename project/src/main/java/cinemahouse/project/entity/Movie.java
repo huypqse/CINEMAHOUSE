@@ -60,5 +60,11 @@ public class Movie extends AbstractEntity<Long>{
             inverseJoinColumns = @JoinColumn(name = "movie_type_id")
     )
     Set<MovieType> movieTypes;
-
+    @OneToMany(mappedBy = "movie",
+//            cascade = {
+//            CascadeType.PERSIST, CascadeType.MERGE,
+//             CascadeType.REFRESH
+//    },
+            fetch = FetchType.LAZY)
+    Set<ScreeningSession> screeningSessions;
 }

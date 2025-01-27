@@ -31,11 +31,15 @@ public class  ScreeningSession extends AbstractEntity<Long>{
     @Column(name = "screening_session_status", nullable = false)
     ScreeningSessionStatus screeningSessionStatus;
 
-    @ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @ManyToOne(optional = false
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}
+    )
     @JoinColumn(name = "movie_id", nullable = false)
     Movie movie;
 
-    @ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @ManyToOne(optional = false
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}
+    )
     @JoinColumn(name = "screening_room_id", nullable = false)
     ScreeningRoom screeningRoom;
 

@@ -25,9 +25,11 @@ public class Cinema extends AbstractEntity<Long> {
     @Column(nullable = false, name = "cinema_status")
     CinemaStatus cinemaStatus;
 
-    @OneToMany(mappedBy = "cinema", cascade = {
-            CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH
-    }, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "cinema",
+//            cascade = {
+//            CascadeType.PERSIST, CascadeType.MERGE,
+//             CascadeType.REFRESH
+//    },
+fetch = FetchType.LAZY)
     Set<ScreeningRoom> screeningRooms;
 }

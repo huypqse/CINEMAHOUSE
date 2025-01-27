@@ -25,11 +25,17 @@ public class Seat extends AbstractEntity<Long>{
     @Column(name = "status", nullable = false)
     SeatStatus status;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, optional = false)
+    @ManyToOne(
+            fetch = FetchType.EAGER
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}
+    )
     @JoinColumn(name = "screening_room_id", nullable = false)
     ScreeningRoom screeningRoom;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, optional = false)
+    @ManyToOne(
+            fetch = FetchType.EAGER
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}
+    )
     @JoinColumn(name = "seat_type_id", nullable = false)
     SeatType seatType;
 

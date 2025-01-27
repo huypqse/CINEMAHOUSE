@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -24,17 +26,31 @@ public class ScreeningRoom extends AbstractEntity<Long>{
     @Enumerated(EnumType.STRING)
     @Column(name = "screening_room_status", nullable = false)
     ScreeningRoomStatus screeningRoomStatus;
+    @OneToMany(mappedBy = "screeningRoom",
+//            cascade = {
+//            CascadeType.PERSIST, CascadeType.MERGE,
+//             CascadeType.REFRESH
+//    },
+            fetch = FetchType.LAZY)
+    Set<ScreeningSession> screeningSessions;
 
+    @OneToMany(mappedBy = "screeningRoom",
+//            cascade = {
+//            CascadeType.PERSIST, CascadeType.MERGE,
+//             CascadeType.REFRESH
+//    },
+            fetch = FetchType.LAZY)
+    Set<Seat> seats;
     @ManyToOne(
-            fetch = FetchType.EAGER,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}
+            fetch = FetchType.EAGER
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}
     )
     @JoinColumn(name = "roomtype_id", nullable = false)
     RoomType roomType;
 
     @ManyToOne(
-            fetch = FetchType.EAGER,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}
+            fetch = FetchType.EAGER
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}
     )
     @JoinColumn(name = "cinema_id", nullable = false)
     Cinema cinema;

@@ -50,6 +50,20 @@ public class ApplicationInitConfiguration {
     static final String CINEMA_NAME = "CGV Vincom Center";
     @NonFinal
     static final String ROOM_TYPE_VIP = "VIP";
+    @NonFinal
+    static final String SCREENING_ROOM_TYPE_2 = "Room 2";
+    @NonFinal
+    static final String MOVIE_NAME = "Interstellar";
+    @NonFinal
+    static final String FILM_NAME = "The Dark Knight";
+    @NonFinal
+    static final String SEAT_TYPE_VIP = "VIP";
+    @NonFinal
+    static final String SEAT_TYPE_REGULAR = "Regular";
+    @NonFinal
+    static final Double ONE_THOUSAND = 100.000;
+    @NonFinal
+    static final Double TWO_THOUSAND = 200.000;
     @Bean
 //    @ConditionalOnProperty(
 //            prefix = "spring",
@@ -85,50 +99,59 @@ public class ApplicationInitConfiguration {
                         .name(PredefinedRole.ADMIN_ROLE)
                         .build());
             }
+            List<MovieType> movieTypesRepo = movieTypeRepository.findAll();
             Set<MovieType> movieTypes = new HashSet<>();
-            MovieType movieType = MovieType.builder()
-                    .type("Honor")
-                    .movieTypeStatus(MovieTypeStatus.ACTIVE)
-                    .build();
-            movieTypeRepository.save(movieType);
-            movieTypes.add(movieType);
-            MovieType movieTypess = MovieType.builder()
-                    .type("Funny")
-                    .movieTypeStatus(MovieTypeStatus.ACTIVE)
-                    .build();
-            movieTypeRepository.save(movieTypess);
-           movieTypes.add(movieTypess);
-            Movie movie = Movie.builder()
-                    .name("Interstellar")
-                    .actors("Matthew McConaughey, Anne Hathaway, Jessica Chastain")
-                    .director("Christopher Nolan")
-                    .ageLimit(12)
-                    .content("A visually stunning and emotionally gripping story of space exploration and the bond between a father and his daughter.")
-                    .language("English")
-                    .coverPhoto("https://example.com/interstellar.jpg") // Replace with an actual URL if needed
-                    .startDate(LocalDate.of(2014, 10, 26)) // Original premiere date
-                    .releaseDate(LocalDate.of(2014, 11, 7))
-                    .status(MovieStatus.COMING_SOON)
-                    .movieTypes(movieTypes)
-                    .build();
-            movieRepository.save(movie);
-           // movieSearchRepository.index(movie);
+            if(movieTypesRepo.isEmpty()) {
+                MovieType movieType = MovieType.builder()
+                        .type("Honor")
+                        .movieTypeStatus(MovieTypeStatus.ACTIVE)
+                        .build();
+                movieTypeRepository.save(movieType);
+                movieTypes.add(movieType);
+                MovieType movieTypess = MovieType.builder()
+                        .type("Funny")
+                        .movieTypeStatus(MovieTypeStatus.ACTIVE)
+                        .build();
+                movieTypeRepository.save(movieTypess);
+                movieTypes.add(movieTypess);
+            } else {
+                System.out.println(movieTypesRepo.size());
+            }
+            List<Movie> moviesRepo = movieRepository.findAll();
+            if (moviesRepo.isEmpty()) {
+                Movie movie = Movie.builder()
+                        .name("Interstellar")
+                        .actors("Matthew McConaughey, Anne Hathaway, Jessica Chastain")
+                        .director("Christopher Nolan")
+                        .ageLimit(12)
+                        .content("A visually stunning and emotionally gripping story of space exploration and the bond between a father and his daughter.")
+                        .language("English")
+                        .coverPhoto("https://example.com/interstellar.jpg") // Replace with an actual URL if needed
+                        .startDate(LocalDate.of(2014, 10, 26)) // Original premiere date
+                        .releaseDate(LocalDate.of(2014, 11, 7))
+                        .status(MovieStatus.COMING_SOON)
+                        .movieTypes(movieTypes)
+                        .build();
+                movieRepository.save(movie);
+                // movieSearchRepository.index(movie);
 
-            Movie film = Movie.builder()
-                    .name("The Dark Knight")
-                    .actors("Christian Bale, Heath Ledger, Gary Oldman, Morgan Freeman")
-                    .director("Christopher Nolan")
-                    .ageLimit(13)
-                    .content("Batman faces the Joker, a criminal mastermind who seeks to create chaos in Gotham City.")
-                    .language("English")
-                    .coverPhoto("https://example.com/dark-knight.jpg") // Replace with actual URL
-                    .startDate(LocalDate.of(2008, 6, 18)) // Premiere date
-                    .releaseDate(LocalDate.of(2008, 7, 18))
-                    .status(MovieStatus.COMING_SOON)
-                    .movieTypes(movieTypes)
-                    .build();
-            movieRepository.save(film);
-          //  movieSearchRepository.index(film);
+                Movie film = Movie.builder()
+                        .name("The Dark Knight")
+                        .actors("Christian Bale, Heath Ledger, Gary Oldman, Morgan Freeman")
+                        .director("Christopher Nolan")
+                        .ageLimit(13)
+                        .content("Batman faces the Joker, a criminal mastermind who seeks to create chaos in Gotham City.")
+                        .language("English")
+                        .coverPhoto("https://example.com/dark-knight.jpg") // Replace with actual URL
+                        .startDate(LocalDate.of(2008, 6, 18)) // Premiere date
+                        .releaseDate(LocalDate.of(2008, 7, 18))
+                        .status(MovieStatus.COMING_SOON)
+                        .movieTypes(movieTypes)
+                        .build();
+                movieRepository.save(film);
+                //  movieSearchRepository.index(film);
+            }
+
             Optional<Cinema> optionalCinema = cinemaRepository.findByName(CINEMA_NAME);
 
             if (optionalCinema.isEmpty()) {
@@ -164,70 +187,110 @@ public class ApplicationInitConfiguration {
                 System.out.println("RoomType already exists: " + roomTypeList.size());
             }
 
-            ScreeningRoom screeningRoom = ScreeningRoom.builder()
-                    .name("Room 2")
-                    .cinema(cinemaRepository.findByName(CINEMA_NAME).orElseThrow(() -> new AppException(ErrorCode.CINEMA_NOT_EXISTED)))
-                    .screeningRoomStatus(ScreeningRoomStatus.Available)
-                    .roomType(roomTypeRepository.findByName(ROOM_TYPE_VIP).orElseThrow(() -> new AppException(ErrorCode.ROOMTYPE_VIP__NOT_EXISTED)))
-                    .build();
-            screeningRoomRepository.save(screeningRoom);
-//            ScreeningSession screeningSession = ScreeningSession.builder()
-//                    .screeningRoom(screeningRoom)
-//                    .movie(movie)
-//                    .startDate(LocalDate.now()) // Today's date for the screening
-//                    .startTime(Instant.now())  // Current time as the session's start time
-//                    .endTime(Instant.now().plus(Duration.ofHours(2))) // Assuming the session lasts 2 hours
-//                    .screeningSessionStatus(ScreeningSessionStatus.Ongoing) // Enum for current status
-//                    .build();
-//            screeningSessionRepository.save(screeningSession);
-//            ScreeningSession screeningSessions = ScreeningSession.builder()
-//                    .screeningRoom(screeningRoom)
-//                    .movie(film)
-//                    .startDate(LocalDate.now().plusDays(1)) // Today's date for the screening
-//                    .startTime(Instant.now().plus(Duration.ofHours(1)))  // Current time as the session's start time
-//                    .endTime(Instant.now().plus(Duration.ofHours(3))) // Assuming the session lasts 2 hours
-//                    .screeningSessionStatus(ScreeningSessionStatus.Ongoing) // Enum for current status
-//                    .build();
-//            screeningSessionRepository.save(screeningSessions);
+            Cinema cinema = cinemaRepository.findByName(CINEMA_NAME)
+                    .orElseThrow(() -> new AppException(ErrorCode.CINEMA_NOT_EXISTED));
+
+            RoomType roomType = roomTypeRepository.findByName(ROOM_TYPE_VIP)
+                    .orElseThrow(() -> new AppException(ErrorCode.ROOMTYPE_VIP__NOT_EXISTED));
+            Optional<ScreeningRoom> optionalScreeningRoom = screeningRoomRepository.findByName(SCREENING_ROOM_TYPE_2);
+            if (optionalScreeningRoom.isEmpty()) {
+                ScreeningRoom screeningRoom = ScreeningRoom.builder()
+                        .name("Room 2")
+                        .cinema(cinema)  // Managed entity
+                        .screeningRoomStatus(ScreeningRoomStatus.Available)
+                        .roomType(roomType)  // Managed entity
+                        .build();
+                screeningRoomRepository.save(screeningRoom);
+            } else {
+                System.out.println("Screening room already exists: " + optionalScreeningRoom.get().getName());
+            }
+            ScreeningRoom screeningRoom2 = screeningRoomRepository.findByName(SCREENING_ROOM_TYPE_2).orElseThrow(() -> new AppException(ErrorCode.SCREENING_ROOM_NOT_EXISTED));
+            Movie movienName = movieRepository.findByName(MOVIE_NAME).orElseThrow(() -> new AppException(ErrorCode.MOVIE_NOT_EXISTED));
+            Movie filmName = movieRepository.findByName(FILM_NAME).orElseThrow(() -> new AppException(ErrorCode.MOVIE_NOT_EXISTED));
+
+            List<ScreeningSession> screeningSessions = screeningSessionRepository.findAll();
+            if(screeningSessions.isEmpty()) {
+                ScreeningSession screeningSession = ScreeningSession.builder()
+                        .screeningRoom(screeningRoom2)
+                        .movie(movienName)
+                        .startDate(LocalDate.now()) // Today's date for the screening
+                        .startTime(Instant.now())  // Current time as the session's start time
+                        .endTime(Instant.now().plus(Duration.ofHours(2))) // Assuming the session lasts 2 hours
+                        .screeningSessionStatus(ScreeningSessionStatus.Ongoing) // Enum for current status
+                        .build();
+                screeningSessionRepository.save(screeningSession);
+                ScreeningSession screeningSessionss = ScreeningSession.builder()
+                        .screeningRoom(screeningRoom2)
+                        .movie(filmName)
+                        .startDate(LocalDate.now().plusDays(1)) // Today's date for the screening
+                        .startTime(Instant.now().plus(Duration.ofHours(1)))  // Current time as the session's start time
+                        .endTime(Instant.now().plus(Duration.ofHours(3))) // Assuming the session lasts 2 hours
+                        .screeningSessionStatus(ScreeningSessionStatus.Ongoing) // Enum for current status
+                        .build();
+                screeningSessionRepository.save(screeningSessionss);
+            } else {
+                System.out.println("Screening session already exists: " + screeningSessions.size());
+            }
+
+            List<SeatType> seatTypeList = seatTypeRepository.findAll();
+            if (seatTypeList.isEmpty()) {
+                SeatType seatVIP = SeatType.builder()
+                        .name("VIP") // Specify seat type name, e.g., "VIP"
+                        .build();
+                seatTypeRepository.save(seatVIP);
+                SeatType seatRegular = SeatType.builder()
+                        .name("Regular") // Specify seat type name, e.g., "VIP"
+                        .build();
+                seatTypeRepository.save(seatRegular);
+            } else {
+                System.out.println("Seat type already exists: " + seatTypeList.size());
+            }
+
+
+            SeatType seatTypeVIP = seatTypeRepository.findByName(SEAT_TYPE_VIP).orElseThrow(() -> new AppException(ErrorCode.SEAT_TYPE_NOT_EXISTED));
+            SeatType seatTypeRegular = seatTypeRepository.findByName(SEAT_TYPE_REGULAR).orElseThrow(() -> new AppException(ErrorCode.SEAT_TYPE_NOT_EXISTED));
+            // Tạo 50 ghế VIP
+            List<Seat> seatList = seatRepository.findAll();
+            if (seatList.isEmpty()) {
+                for (int i = 1; i <= 50; i++) {
+                    Seat seat = Seat.builder()
+                            .row("A" + i)  // Specify the row, e.g., "A"
+                            .column(i) // Số cột sẽ từ 1 đến 50
+                            .status(SeatStatus.AVAILABLE) // Set status
+                            .seatType(seatTypeVIP)// Set seat type to VIP
+                            .screeningRoom(screeningRoom2)
+                            .build();
+                    seatRepository.save(seat);
+                }
+                // Tạo 50 ghế Regular
+                for (int i = 1; i <= 50; i++) {
+                    Seat seat = Seat.builder()
+                            .row("B" + i)  // Specify the row, e.g., "B"
+                            .column(i) // Số cột sẽ từ 1 đến 50
+                            .status(SeatStatus.AVAILABLE) // Set status
+                            .seatType(seatTypeRegular) // Set seat type to Regular
+                            .screeningRoom(screeningRoom2)
+                            .build();
+                    seatRepository.save(seat);
+                }
+            }
+
+            List<TicketPrice> ticketPriceList = ticketPriceRepository.findAll();
+            if (ticketPriceList.isEmpty()) {
+                TicketPrice ticketPriceVIP = TicketPrice.builder().price(200.000).status(TicketPriceStatus.VIP)
+                        .build();
+                ticketPriceRepository.save(ticketPriceVIP);
+                TicketPrice ticketPriceRegular = TicketPrice.builder().price(100.000).status(TicketPriceStatus.NORMAL)
+                        .build();
+                ticketPriceRepository.save(ticketPriceRegular);
+            } else {
+                System.out.println("Ticket price already exists: " + ticketPriceList.size());
+            }
+//            TicketPrice oneThousandVND = ticketPriceRepository.findByPrice(ONE_THOUSAND).orElseThrow(() -> new AppException(ErrorCode.PRICE_NOT_EXISTED));
+//            TicketPrice twoThousandVND = ticketPriceRepository.findByPrice(TWO_THOUSAND).orElseThrow(() -> new AppException(ErrorCode.PRICE_NOT_EXISTED));
 //
-//
-//            SeatType seatVIP = SeatType.builder()
-//                    .name("VIP") // Specify seat type name, e.g., "VIP"
-//                    .build();
-//            seatTypeRepository.save(seatVIP);
-//            SeatType seatRegular = SeatType.builder()
-//                    .name("Regular") // Specify seat type name, e.g., "VIP"
-//                    .build();
-//            seatTypeRepository.save(seatRegular);
-//
-//            // Tạo 50 ghế VIP
-//            for (int i = 1; i <= 50; i++) {
-//                Seat seat = Seat.builder()
-//                        .row("A" + i)  // Specify the row, e.g., "A"
-//                        .column(i) // Số cột sẽ từ 1 đến 50
-//                        .status(SeatStatus.AVAILABLE) // Set status
-//                        .seatType(seatVIP) // Set seat type to VIP
-//                        .build();
-//                seatRepository.save(seat);
-//            }
-//
-//            // Tạo 50 ghế Regular
-//            for (int i = 1; i <= 50; i++) {
-//                Seat seat = Seat.builder()
-//                        .row("B" + i)  // Specify the row, e.g., "B"
-//                        .column(i) // Số cột sẽ từ 1 đến 50
-//                        .status(SeatStatus.AVAILABLE) // Set status
-//                        .seatType(seatRegular) // Set seat type to Regular
-//                        .build();
-//                seatRepository.save(seat);
-//            }
-//            TicketPrice ticketPriceVIP = TicketPrice.builder().price(200.000).status(TicketPriceStatus.VIP)
-//            .build();
-//            ticketPriceRepository.save(ticketPriceVIP);
-//            TicketPrice ticketPriceRegular = TicketPrice.builder().price(100.000).status(TicketPriceStatus.NORMAL)
-//                    .build();
-//            ticketPriceRepository.save(ticketPriceRegular);
 //            Ticket ticket = Ticket.builder()
+//                    .seat()
 //                    .status(TicketStatus.AVAILABLE)
 //                    .build();
 //            ticketRepository.save(ticket);

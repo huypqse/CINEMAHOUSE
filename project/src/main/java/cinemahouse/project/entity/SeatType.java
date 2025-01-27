@@ -18,7 +18,7 @@ public class SeatType extends AbstractEntity<Long>{
     String name;
 
     @OneToMany(mappedBy = "seatType",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH},
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH},
             fetch = FetchType.LAZY)
     Set<Seat> seats;
 }

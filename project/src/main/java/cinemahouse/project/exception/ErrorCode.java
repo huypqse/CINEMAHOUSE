@@ -25,6 +25,11 @@ public enum ErrorCode {
     UNABLE_DOWNLOAD_FILE(400, "Unable to download file", HttpStatus.BAD_REQUEST),
     CINEMA_NOT_EXISTED(400, "Cinema not existed", HttpStatus.BAD_REQUEST),
     ROOMTYPE_VIP__NOT_EXISTED(400, "Roomtype vip not existed", HttpStatus.BAD_REQUEST),
+    SCREENING_ROOM_NOT_EXISTED(400, "Screening room not existed", HttpStatus.BAD_REQUEST),
+    MOVIE_NOT_EXISTED(400, "Movie not existed", HttpStatus.BAD_REQUEST),
+    SEAT_TYPE_NOT_EXISTED(400, "Seat type not existed", HttpStatus.BAD_REQUEST),
+    PRICE_NOT_EXISTED(400, "This price not existed", HttpStatus.BAD_REQUEST),
+
 
     ;
 
