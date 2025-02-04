@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-@EnableConfigurationProperties(MinioProperties.class)
+@EnableConfigurationProperties({MinioProperties.class})
 public class ProjectApplication {
 
 	public static void main(String[] args) {

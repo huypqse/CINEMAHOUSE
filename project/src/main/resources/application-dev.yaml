@@ -1,0 +1,93 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  devtools:
+    restart:
+      enabled: true  # Kích hoạt tính năng restart tự động
+#    livereload:
+#      enabled: true  # Kích hoạt livereload nếu bạn muốn tự động reload trên trình duyệt
+  main:
+    allow-bean-definition-overriding: true
+  mail:
+      host: smtp.gmail.com
+      port: 587
+      username: dangkhoipham80@gmail.com
+      password: vraj fjew eskg vnpv
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+  elasticsearch:
+      uris: http://localhost:9200
+
+
+
+  datasource:
+      driver-class-name: org.postgresql.Driver
+      url: "jdbc:postgresql://localhost:15432/cinemahouse"
+      username: sa
+      password: 12345
+
+    #  data:
+    #    elasticsearch:
+    #      repositories:
+    #        enabled: true
+
+  kafka:
+      bootstrap-servers: localhost:9094
+      consumer:
+        group-id: my-consumer-group
+        auto-offset-reset: earliest
+      producer:
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  jpa:
+      hibernate:
+        ddl-auto: update  # Hoặc 'create-drop' tùy theo yêu cầu
+      properties:
+        hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+outbound:
+    identity:
+      client-id: 1014016100667-asu46qq4b1qn8ms3hprim9i12kooavn0.apps.googleusercontent.com
+      client-secret: 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
+      redirect-uri: http://localhost:3000/authenticate
+
+jwt:
+    signerKey: 1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij
+    valid-duration: 360000
+    refreshable-duration: 360000
+
+
+integration:
+    minio:
+      access-key: admin
+      secret-key: admin@2025
+      url: http://localhost:9000 # Updated for Docker
+
+
+logging:
+    level:
+      org:
+        hibernate:
+          SQL: DEBUG
+          type:
+            descriptor:
+              sql:
+                BasicBinder: TRACE
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+      enabled: true
+openapi:
+  service:
+    api-docs: cinema-api # Ensure this key matches the Java class
+    title: Backend API Document
+    version: v1.1.0
+    server: http://localhost:${server.port}  # Use an IP address when deploying to the cloud

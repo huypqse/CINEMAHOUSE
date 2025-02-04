@@ -7,6 +7,8 @@ import cinemahouse.project.dto.request.MovieFilterRequest;
 import cinemahouse.project.dto.response.PageResponse;
 import cinemahouse.project.entity.Movie;
 import cinemahouse.project.service.MovieService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/api/v1/movie")
+@Tag(name = "Movie Controller")
 @Slf4j
 public class MovieController {
     MovieService movieService;
@@ -37,6 +40,7 @@ public class MovieController {
                 .result(result)
                 .build();
     }
+    @Operation(summary = "Elastic search", description = "Using elasticsearch ver 1")
     @GetMapping("/search-version")
     public ApiResponse<PageResponse<Movie>> search(
             @RequestParam String language,

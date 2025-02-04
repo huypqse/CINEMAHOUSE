@@ -129,6 +129,35 @@
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 	</dependencies>
+	<profiles>
+		<!-- Profile Development -->
+		<profile>
+			<id>dev</id>
+			<activation>
+<!--				khi không chỉ định profile se chay vao thg dev-->
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+		</profile>
+
+		<!-- Profile Testing -->
+		<profile>
+			<id>test</id>
+			<properties>
+				<spring.profiles.active>test</spring.profiles.active>
+			</properties>
+		</profile>
+
+		<!-- Profile Production -->
+		<profile>
+			<id>prod</id>
+			<properties>
+				<spring.profiles.active>prod</spring.profiles.active>
+			</properties>
+		</profile>
+	</profiles>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -235,5 +264,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>cinemahouse-service</finalName>
 	</build>
 </project>
