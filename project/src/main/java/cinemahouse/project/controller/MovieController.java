@@ -41,7 +41,7 @@ public class MovieController {
                 .build();
     }
     @Operation(summary = "Elastic search", description = "Using elasticsearch ver 1")
-    @GetMapping("/search-version")
+    @GetMapping(value = "/search-version", headers = "apiVersion=v1.0")
     public ApiResponse<PageResponse<Movie>> search(
             @RequestParam String language,
             @RequestParam(defaultValue = "1") int page,

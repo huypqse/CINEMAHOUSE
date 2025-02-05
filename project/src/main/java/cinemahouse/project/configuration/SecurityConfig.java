@@ -1,8 +1,12 @@
 package cinemahouse.project.configuration;
 
+import com.sendgrid.SendGrid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,6 +25,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private final CustomJwtDecoder customJwtDecoder;
 
+    @Value("${spring.sendgrid.api-key}")
+    private String sendgridApiKey;
+
     private static final String[] PUBLIC_ENDPOINT = {
             "/api/v1/auth/token",
             "/api/v1/user/register",
@@ -37,6 +44,8 @@ public class SecurityConfig {
             "/api/v1/movie/search",
             "/api/v1/movie/search-version",
             "/api/v1/movie",
+            "/send-email",
+            "/view-trailer-email",
 
 
     };
@@ -76,4 +85,13 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
+    @Bean
+    JavaMailSender javaMailSender() {
+        return new JavaMailSenderImpl();
+    }
+    @Bean
+    public SendGrid sendGrid() {
+        return new SendGrid(sendgridApiKey);
+    }
+
 }

@@ -22,7 +22,9 @@ spring:
               enable: true
   elasticsearch:
       uris: http://localhost:9200
-
+  sendgrid:
+    api-key: ${SENDGRID_API_KEY}
+    from-email: huypqse@gmail.com
 
 
   datasource:
@@ -90,4 +92,4 @@ openapi:
     api-docs: cinema-api # Ensure this key matches the Java class
     title: Backend API Document
     version: v1.1.0
-    server: http://localhost:${server.port}  # Use an IP address when deploying to the cloud
+    server: http://localhost:${server.port}/cinemahouse  # Use an IP address when deploying to the cloud

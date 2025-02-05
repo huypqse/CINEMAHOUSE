@@ -15,4 +15,4 @@ openapi:
     api-docs: cinema-api # Ensure this key matches the Java class
     title: Backend API Document
     version: v1.1.0
-    server: ${BACKEND_SERVICE:http://localhost:${server.port}}   # Use an IP address when deploying to the cloud
+    server: ${BACKEND_SERVICE:http://localhost:${server.port}/cinemahouse}   # Use an IP address when deploying to the cloud
