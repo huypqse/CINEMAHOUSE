@@ -177,8 +177,10 @@ public class EmailService {
             log.info("Email sent to {} successfully!", event.getRecipient());
 
         } catch (Exception ex) {
+            log.info("Email sent to not successfully!");
             log.error("Error processing email for recipient {}: {}", event.getRecipient(), ex.getMessage(), ex);
             throw new RuntimeException("Failed to process Kafka message", ex);
+
         }
     }
 }
