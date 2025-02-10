@@ -12,6 +12,8 @@ import cinemahouse.project.exception.ErrorCode;
 import cinemahouse.project.mapper.UserMapper;
 import cinemahouse.project.repository.RoleRepository;
 import cinemahouse.project.repository.UserRepository;
+import cinemahouse.project.service.interfaces.EmailService;
+import cinemahouse.project.service.interfaces.UserService;
 import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +36,13 @@ import java.util.Set;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class UserService {
+public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
-    EmailService emailService;
+    EmailServiceImpl emailService;
     OtpService otpService;
     KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -49,6 +51,7 @@ public class UserService {
     }
 
     @Transactional
+    @Override
     public UserResponse createUser(UserCreationRequest request, String otp)  {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -85,6 +88,7 @@ public class UserService {
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @Override
     public void createPassword(PasswordCreationForFirstRequest request){
 
         var context = SecurityContextHolder.getContext();
@@ -102,12 +106,13 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @Override
     public List<UserResponse> getAllUsers(){
         return userRepository.findAll()
                 .stream().map(userMapper::toUserResponse).toList();
     }
-
+    @Override
     public UserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
         String email = context.getAuthentication().getName();
@@ -124,6 +129,7 @@ public class UserService {
     }
 
     @Transactional
+    @Override
     public void sendOtpForgotPassword(EmailRequest request)
             throws MessagingException, UnsupportedEncodingException {
 
@@ -147,7 +153,7 @@ public class UserService {
         );
         emailService.sendEmail(subject, content, List.of(user.getEmail()));
     }
-
+    @Override
     public void sendOtpRegister(EmailRequest request)
             throws MessagingException, UnsupportedEncodingException {
         String otp = generateOtp();
@@ -180,7 +186,7 @@ public class UserService {
         emailService.sendEmail(subject, emailContent, List.of(request.getEmail()));
     }
 
-
+    @Override
     public VerifyOtpResponse verifyOtp(VerifyOtpRequest request){
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -203,6 +209,7 @@ public class UserService {
     }
 
     @Transactional
+    @Override
     public void resetPassword(PasswordCreationRequest request){
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -220,7 +227,6 @@ public class UserService {
         user.setOtpExpiryDate(null);
         userRepository.save(user);
     }
-
 
 
     private static String generateOtp(){

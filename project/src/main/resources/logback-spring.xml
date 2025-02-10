@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <appender name="Logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <!-- Địa chỉ Logstash cho môi trường cục bộ -->
+        <!-- <destination>localhost:5600</destination> -->
+
+        <!-- Địa chỉ Logstash cho môi trường Docker -->
+        <destination>${LOGSTASH_HOST:-localhost:5600}</destination>
+
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <mdc/>
+                <context/>
+                <LogLevel/>
+                <LoggerName/>
+                <pattern>
+                    <pattern>
+                        {
+                        "appName": "backend-service"
+                        }
+                    </pattern>
+                </pattern>
+                <threadName/>
+                <message/>
+                <logstashMarkers/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="Logstash"/>
+    </root>
+</configuration>

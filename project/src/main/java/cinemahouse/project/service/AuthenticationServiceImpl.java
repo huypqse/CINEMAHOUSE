@@ -16,6 +16,7 @@ import cinemahouse.project.repository.RoleRepository;
 import cinemahouse.project.repository.UserRepository;
 import cinemahouse.project.repository.http_client.OutboundIdentityClient;
 import cinemahouse.project.repository.http_client.OutboundUserClient;
+import cinemahouse.project.service.interfaces.AuthenticationService;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
@@ -77,7 +78,7 @@ public class AuthenticationService {
     @NonFinal
     protected final String GRANT_TYPE = "authorization_code";
 
-
+    @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -101,6 +102,7 @@ public class AuthenticationService {
     }
 
     @Transactional
+    @Override
     public AuthenticationResponse outboundAuthenticate(String code) {
         ExchangeTokenResponse response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
                 .code(code)
@@ -129,7 +131,7 @@ public class AuthenticationService {
                 .token(token)
                 .build();
     }
-
+    @Override
     public String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
@@ -155,7 +157,7 @@ public class AuthenticationService {
             throw new RuntimeException(e);
         }
     }
-
+    @Override
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
         try {
             var signToken = verifyToken(request.getToken(), true);
@@ -176,7 +178,7 @@ public class AuthenticationService {
             log.info("Token already expired or invalid");
         }
     }
-
+    @Override
     public SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
         if (token == null || token.trim().isEmpty()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -206,7 +208,7 @@ public class AuthenticationService {
 
         return signedJWT;
     }
-
+    @Override
     public AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException {
         var signJWT = verifyToken(request.getToken(), true);
 
@@ -227,7 +229,7 @@ public class AuthenticationService {
                 .authenticated(true)
                 .build();
     }
-
+    @Override
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
 
@@ -244,7 +246,6 @@ public class AuthenticationService {
                 .scope(scope)
                 .build();
     }
-
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
 

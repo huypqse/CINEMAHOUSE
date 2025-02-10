@@ -1,6 +1,7 @@
 package cinemahouse.project.service;
 
 import cinemahouse.project.dto.event.NotificationEvent;
+import cinemahouse.project.service.interfaces.EmailService;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -11,10 +12,7 @@ import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -36,7 +34,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 //@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j(topic = "EMAIL-SERVICE")
-public class EmailService {
+public class EmailServiceImpl implements EmailService {
 
 //    @NonFinal
     @Value("${spring.mail.username}")
@@ -55,6 +53,7 @@ public class EmailService {
      * @param subject
      * @param text
      */
+    @Override
     public void send(String to, String subject, String text) {
         Email fromEmail = new Email(from);
         Email toEmail = new Email(to);
@@ -81,6 +80,7 @@ public class EmailService {
             log.error(e.getMessage());
         }
     }
+    @Override
     public void emailViewTrailer(String to, String name, String link) throws IOException {
         log.info("Email view trailer started");
 
@@ -121,6 +121,7 @@ public class EmailService {
         }
     }
     @Async
+    @Override
     public void sendEmail(String subject, String content, List<String> toList) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -137,6 +138,7 @@ public class EmailService {
     }
 
     @KafkaListener(topics = "notification-delivery")
+    @Override
     public void sendEmailByKafka(NotificationEvent event)
             throws MessagingException, UnsupportedEncodingException {
         log.info("Received Kafka message to send email: {}", event);

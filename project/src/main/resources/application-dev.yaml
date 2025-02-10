@@ -5,8 +5,7 @@ spring:
   devtools:
     restart:
       enabled: true  # Kích hoạt tính năng restart tự động
-#    livereload:
-#      enabled: true  # Kích hoạt livereload nếu bạn muốn tự động reload trên trình duyệt
+
   main:
     allow-bean-definition-overriding: true
   mail:
@@ -23,15 +22,16 @@ spring:
   elasticsearch:
       uris: http://localhost:9200
   sendgrid:
-    api-key: ${SENDGRID_API_KEY}
+    api-key: ${SENDGRID_API_KEY:DUMMY-SENDGRID_API_KEY}
     from-email: huypqse@gmail.com
 
 
   datasource:
       driver-class-name: org.postgresql.Driver
-      url: "jdbc:postgresql://localhost:15432/cinemahouse"
-      username: sa
-      password: 12345
+#      gán bieens moi truong nhan tu ben ngoai vao, bien nay bi null hoac k co gia tri mac dinh gan vao bien
+      url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:15432}/cinemahouse
+      username: ${DATABASE_USERNAME:sa}
+      password: ${DATABASE_PASSWORD:12345}
 
     #  data:
     #    elasticsearch:

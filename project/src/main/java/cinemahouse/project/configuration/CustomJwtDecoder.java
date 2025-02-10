@@ -1,7 +1,7 @@
 package cinemahouse.project.configuration;
 
 import cinemahouse.project.dto.request.IntrospectRequest;
-import cinemahouse.project.service.AuthenticationService;
+import cinemahouse.project.service.AuthenticationServiceImpl;
 import com.nimbusds.jose.JOSEException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class CustomJwtDecoder implements JwtDecoder {
     private String signerKey;
 
     @Autowired
-    private AuthenticationService authenticationService;
+    private AuthenticationServiceImpl authenticationService;
 
     private NimbusJwtDecoder nimbusJwtDecoder = null;
 

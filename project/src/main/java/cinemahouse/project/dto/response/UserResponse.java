@@ -19,8 +19,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
     String email;
-    String firstName;
-    String lastName;
+    String username;
     LocalDate dob;
     Boolean noPassword;
     Set<Role> roles = new HashSet<>();

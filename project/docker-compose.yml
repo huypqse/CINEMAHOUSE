@@ -1,4 +1,4 @@
-version: "3.8"
+
 services:
   cinemahouse_app:
     image: cinemahouse:latest
@@ -9,11 +9,17 @@ services:
     ports:
       - "9090:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/cinemahouse
-      - SPRING_DATASOURCE_USERNAME=sa
-      - SPRING_DATASOURCE_PASSWORD=12345
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/cinemahouse
+#      - SPRING_DATASOURCE_USERNAME=sa
+#      - SPRING_DATASOURCE_PASSWORD=12345
+#    hot docker internal là host bên trogn docker
+     DATABASE_HOST: host.docker.internal
+     DATABASE_PORT: 15432
+     DATABASE_USERNAME: sa
+     DATABASE_PASSWORD: 12345
+     LOGSTASH_HOST: host.docker.internal:5600
     networks:
-      - lms-network
+      - cinemahouse-network
     depends_on:
       - postgres
       - kafka
@@ -34,7 +40,7 @@ services:
     volumes:
       - ./data/postgresql:/var/lib/postgresql/data
     networks:
-      - lms-network
+      - cinemahouse-network
     restart: always
 
   redis:
@@ -43,7 +49,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - lms-network
+      - cinemahouse-network
     restart: always
   kafka:
     image: 'bitnami/kafka:3.7.0'
@@ -60,22 +66,58 @@ services:
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
 
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+#    # volumes:
+#    #   - ~/volumes/:/usr/share/elasticsearch/data
+#    ports:
+#      - "9200:9200"
+#      - "9300:9300"
+#    environment:
+#      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+#      - discovery.type=single-node
+#      - xpack.security.enabled=false
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:9200/_cluster/health?wait_for_status=green&timeout=10s" ]
+#      interval: 5s
+#      timeout: 10s
+#      retries: 10
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
-    # volumes:
-    #   - ~/volumes/:/usr/share/elasticsearch/data
+    image: elasticsearch:7.14.1
+    container_name: elasticsearch
+    restart: always
     ports:
       - "9200:9200"
-      - "9300:9300"
     environment:
-      - ES_JAVA_OPTS=-Xms256m -Xmx256m
       - discovery.type=single-node
-      - xpack.security.enabled=false
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9200/_cluster/health?wait_for_status=green&timeout=10s" ]
-      interval: 5s
-      timeout: 10s
-      retries: 10
+    networks:
+      - default
+
+  kibana:
+      image: kibana:7.14.1
+      container_name: kibana
+      restart: always
+      ports:
+        - "5601:5601"
+      environment:
+        - ELASTICSEARCH_HOSTS=http://elastic-search:9200
+      networks:
+        - default
+  logstash:
+    image: logstash:7.14.1
+    container_name: logstash
+    restart: always
+    ports:
+      - "5600:5600" # Socket port
+      - "5044:5044" # Beats input
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - XPACK_MONITORING_ELASTICSEARCH_HOSTS=http://elastic-search:9200
+      - XPACK_MONITORING_ENABLED=true
+    networks:
+      - default
+
   minio:
     image: bitnami/minio:latest
     container_name: minio
@@ -91,7 +133,7 @@ services:
     command: minio server /bitnami/minio/data --console-address ":9001"
 
 networks:
-  lms-network:
+  cinemahouse-network:
     driver: bridge
 volumes:
   data:
