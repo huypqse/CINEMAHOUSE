@@ -19,8 +19,8 @@ spring:
             auth: true
             starttls:
               enable: true
-  elasticsearch:
-      uris: http://localhost:9200
+#  elasticsearch:
+#      uris: http://localhost:9200
   sendgrid:
     api-key: ${SENDGRID_API_KEY:DUMMY-SENDGRID_API_KEY}
     from-email: huypqse@gmail.com
@@ -65,11 +65,11 @@ jwt:
     refreshable-duration: 360000
 
 
-integration:
-    minio:
-      access-key: admin
-      secret-key: admin@2025
-      url: http://localhost:9000 # Updated for Docker
+#integration:
+#    minio:
+#      access-key: admin
+#      secret-key: admin@2025
+#      url: http://localhost:9000 # Updated for Docker
 
 
 logging:
