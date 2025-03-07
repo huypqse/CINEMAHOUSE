@@ -1,6 +1,5 @@
 package cinemahouse.project.service.interfaces;
 
-import cinemahouse.project.dto.event.NotificationEvent;
 import jakarta.mail.MessagingException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -8,6 +7,10 @@ import java.util.List;
 
 public interface EmailService {
 
+    void sendPaymentSuccess(String recipientEmail, String cinemaName, String customerName,
+                                   String customerPhone, String cinemaAddress, String movieTitle,
+                                   String showDate, String showTime, List<String> seatNumbers,
+                                   List<String> ticketPrices, String totalPrice, String ticketUrl) throws IOException;
     /**
      * Gửi email bằng SendGrid.
      * @param to Địa chỉ email người nhận.
@@ -39,5 +42,5 @@ public interface EmailService {
      * @throws MessagingException Nếu có lỗi khi gửi email.
      * @throws UnsupportedEncodingException Nếu có lỗi mã hóa.
      */
-    void sendEmailByKafka(NotificationEvent event) throws MessagingException, UnsupportedEncodingException;
+//    void sendEmailByKafka(NotificationEvent event) throws MessagingException, UnsupportedEncodingException;
 }
