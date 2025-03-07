@@ -20,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -28,20 +30,21 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class MovieControllerImpl implements MovieController {
     MovieService movieService;
-    @PostMapping("/search")
-    @Override
-    public ApiResponse<Page<Movie>> searchMovies(@RequestBody @Valid MovieFilterRequest filterRequest
-                                                        ) {
-        log.info("Searching movies with filter: {}", filterRequest);
-
-        final var result = movieService.execute(new CriteriaObject<MovieFilterRequest>().setObject(filterRequest));
-        log.info("result: {}", result);
-
-        return ApiResponse.<Page<Movie>>builder()
-                .code(HttpStatus.OK.value())
-                .result(result)
-                .build();
-    }
+//    @PostMapping("/search")
+//    @Override
+//    public ApiResponse<Page<Movie>> searchMovies(@RequestBody @Valid MovieFilterRequest filterRequest
+//                                                        ) {
+//        log.info("Searching movies with filter: {}", filterRequest);
+//
+//        final var result = movieService.execute(new CriteriaObject<MovieFilterRequest>().setObject(filterRequest));
+//        log.info("result: {}", result);
+//
+//
+//        return ApiResponse.<Page<Movie>>builder()
+//                .code(HttpStatus.OK.value())
+//                .result(result)
+//                .build();
+//    }
     @Operation(summary = "Elastic search", description = "Using elasticsearch ver 1")
     @GetMapping(value = "/search-version", headers = "apiVersion=v1.0")
     @Override
@@ -49,7 +52,7 @@ public class MovieControllerImpl implements MovieController {
             @RequestParam String language,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        movieService.reindexMovies();
+//        movieService.reindexMovies();
         PageResponse<Movie> result = movieService.search(language, page, size);
         log.info("result: {}", result);
         return ApiResponse.<PageResponse<Movie>>builder()
@@ -57,14 +60,15 @@ public class MovieControllerImpl implements MovieController {
                 .result(result)
                 .build();
     }
-    @PostMapping( consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Override
-    public ApiResponse<Movie> addMovie(@Valid MovieDTO movie) {
-        Movie result = movieService.createMovie(movie);
-        return ApiResponse.<Movie>builder()
-                .code(HttpStatus.OK.value())
-                .result(result)
-                .build();
-    }
+//    @PostMapping( consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @Override
+//    public ApiResponse<MovieDTO> addMovie(@Valid MovieDTO movie, @RequestParam List<Long> movieType, @RequestParam List<Long> screeningSessions) {
+//
+//        MovieDTO result = movieService.createMovie(movie, movieType, screeningSessions);
+//        return ApiResponse.<MovieDTO>builder()
+//                .code(HttpStatus.OK.value())
+//                .result(result)
+//                .build();
+//    }
 
 }
