@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface MovieRepository extends JpaRepository<Movie, Long> {
     Page<Movie> findByLanguage(String language, Pageable pageable);
     Optional<Movie> findByName(String name);
+    Optional<Movie> findByScreeningSessions_Id(Long id);
 }
