@@ -1,4 +1,14 @@
-# Cinemahouse Service
+## Cinemahouse Service – Online Ticket Booking Platform  
+
+## Overview  
+**Cinemahouse Service** is an online movie ticket booking platform that allows users to **select seats in real-time** and make **secure payments via VNPay**. The system is built with **Spring Boot, PostgreSQL, WebSocket, Redis, and AWS Lambda**, ensuring **high performance, real-time booking updates, and data consistency**.  
+
+## Features  
+- **Real-time seat selection and booking** using WebSocket.  
+- **Secure payment integration** with VNPay.  
+- **Conflict resolution mechanism** to handle simultaneous seat bookings.  
+- **Optimized performance** with Redis caching.  
+- **Scalable architecture** with AWS Lambda for backend services.  
 
 ## Prerequisites
 Before starting, make sure you have installed the following tools:
