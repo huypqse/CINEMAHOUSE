@@ -8,7 +8,6 @@
 - **Secure payment integration** with VNPay.  
 - **Conflict resolution mechanism** to handle simultaneous seat bookings.  
 - **Optimized performance** with Redis caching.  
-- **Scalable architecture** with AWS Lambda for backend services.  
 
 ## Prerequisites
 Before starting, make sure you have installed the following tools:
