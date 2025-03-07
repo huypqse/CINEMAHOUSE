@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Document(indexName = "movies")
+//@Document(indexName = "movies")
 public class Movie extends AbstractEntity<Long>{
     @Column(nullable = false, name = "movie_name")
     String name;
