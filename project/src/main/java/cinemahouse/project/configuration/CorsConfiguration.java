@@ -12,9 +12,11 @@ public class CorsConfiguration {
         org.springframework.web.cors.CorsConfiguration corsConfiguration =
                 new org.springframework.web.cors.CorsConfiguration();
 
-        corsConfiguration.addAllowedOrigin("*");
+        // Chỉ định nguồn cụ thể
+        corsConfiguration.addAllowedOrigin("http://localhost:5173");
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.setAllowCredentials(true); // Cho phép gửi cookie và thông tin xác thực
 
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
