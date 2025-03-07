@@ -12,17 +12,19 @@ import org.springframework.data.domain.Page;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 public interface MovieController {
 
-    public ApiResponse<Page<Movie>> searchMovies(@RequestBody @Valid MovieFilterRequest filterRequest);
+//    public ApiResponse<Page<Movie>> searchMovies(@RequestBody @Valid MovieFilterRequest filterRequest);
 
-    public ApiResponse<PageResponse<Movie>> search(
+     ApiResponse<PageResponse<Movie>> search(
             @RequestParam String language,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size);
 
-    public ApiResponse<Movie> addMovie(@Valid MovieDTO movie);
+//     ApiResponse<MovieDTO> addMovie(@Valid MovieDTO movie, @RequestParam List<Long> movieType, @RequestParam List<Long> screeningSessions);
 
 
 }
