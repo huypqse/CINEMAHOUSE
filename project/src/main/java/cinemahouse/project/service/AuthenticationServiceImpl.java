@@ -1,6 +1,7 @@
 package cinemahouse.project.service;
 
 import cinemahouse.project.constant.PredefinedRole;
+import cinemahouse.project.dto.RoleDTO;
 import cinemahouse.project.dto.request.*;
 import cinemahouse.project.dto.response.AuthenticationResponse;
 import cinemahouse.project.dto.response.ExchangeTokenResponse;
@@ -11,6 +12,7 @@ import cinemahouse.project.entity.Role;
 import cinemahouse.project.entity.User;
 import cinemahouse.project.exception.AppException;
 import cinemahouse.project.exception.ErrorCode;
+import cinemahouse.project.mapper.RoleMapper;
 import cinemahouse.project.repository.InvalidatedTokenRepository;
 import cinemahouse.project.repository.RoleRepository;
 import cinemahouse.project.repository.UserRepository;
@@ -50,7 +52,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     OutboundIdentityClient outboundIdentityClient;
     OutboundUserClient outboundUserClient;
     RoleRepository roleRepository;
-
+    RoleMapper roleMapper;
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
@@ -93,10 +95,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var token = generateToken(user);
 
         Set<Role> role = user.getRoles();
-
+        List<Role> roles = new ArrayList<>(role);
+        List<RoleDTO> roleDTOS = roleMapper.toDto(roles);
         return AuthenticationResponse.builder()
                 .token(token)
-                .roles(role)
+                .roles(roleDTOS)
                 .authenticated(true)
                 .build();
     }
