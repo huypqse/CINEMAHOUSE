@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -43,7 +42,6 @@ class UserServiceTest {
     private @Mock RoleRepository roleRepository;
     private @Mock EmailServiceImpl emailService;
     private @Mock OtpService otpService;
-    private @Mock KafkaTemplate<String, Object> kafkaTemplate;
 
 
     private static User Huy;
@@ -78,7 +76,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         //khoi tao buoc trien khai la UserService
-        userService = new UserServiceImpl(userRepository, userMapper, passwordEncoder, roleRepository, emailService, otpService, kafkaTemplate);
+        userService = new UserServiceImpl(userRepository, userMapper, passwordEncoder, roleRepository, emailService, otpService);
 
     }
     //after sau khi chay unit test
