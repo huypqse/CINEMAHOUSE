@@ -1,17 +1,14 @@
-
+version: "3.8"
 services:
-  cinemahouse_app:
+  cinemahouse-app:
     image: cinemahouse:latest
-    container_name: cinemahouse_app
-    build:
+    container_name: cinemahouse-app
+    build: #nếu mà docker compose up -d --build là do có cái build nayf
       context: .
       dockerfile: Dockerfile
     ports:
-      - "9090:8080"
+      - "9090:9090"#9090 máy host bên ngoài, 8080 máy host bên trong
     environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/cinemahouse
-#      - SPRING_DATASOURCE_USERNAME=sa
-#      - SPRING_DATASOURCE_PASSWORD=12345
 #    hot docker internal là host bên trogn docker
      DATABASE_HOST: host.docker.internal
      DATABASE_PORT: 15432
@@ -22,7 +19,6 @@ services:
       - cinemahouse-network
     depends_on:
       - postgres
-      - kafka
       - elasticsearch
     volumes:
       - ../src/main/resources/static/templates/material:/app/material
@@ -51,37 +47,8 @@ services:
     networks:
       - cinemahouse-network
     restart: always
-  kafka:
-    image: 'bitnami/kafka:3.7.0'
-    container_name: kafka
-    hostname: kafka
-    ports:
-      - '9094:9094'
-    environment:
-      - KAFKA_CFG_NODE_ID=0
-      - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
 
-#  elasticsearch:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
-#    # volumes:
-#    #   - ~/volumes/:/usr/share/elasticsearch/data
-#    ports:
-#      - "9200:9200"
-#      - "9300:9300"
-#    environment:
-#      - ES_JAVA_OPTS=-Xms256m -Xmx256m
-#      - discovery.type=single-node
-#      - xpack.security.enabled=false
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://localhost:9200/_cluster/health?wait_for_status=green&timeout=10s" ]
-#      interval: 5s
-#      timeout: 10s
-#      retries: 10
+
   elasticsearch:
     image: elasticsearch:7.14.1
     container_name: elasticsearch
@@ -100,7 +67,7 @@ services:
       ports:
         - "5601:5601"
       environment:
-        - ELASTICSEARCH_HOSTS=http://elastic-search:9200
+        - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       networks:
         - default
   logstash:
@@ -113,25 +80,59 @@ services:
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     environment:
-      - XPACK_MONITORING_ELASTICSEARCH_HOSTS=http://elastic-search:9200
+      - XPACK_MONITORING_ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - XPACK_MONITORING_ENABLED=true
     networks:
       - default
-
-  minio:
-    image: bitnami/minio:latest
-    container_name: minio
-    environment:
-      MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: admin@2025
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.listen-address=:9091
     volumes:
-      - ./data:/bitnami/minio/data
-      - ./config:/opt/bitnami/minio/config
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - '9000:9000'
-      - '9001:9001'
-    command: minio server /bitnami/minio/data --console-address ":9001"
+      - '9091:9091'
+    networks:
+      - cinemahouse-network
 
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    environment: # account: grafana/password
+      - GF_SECURITY_ADMIN_USER=grafana
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    ports:
+      - '3000:3000'
+    links:
+      - prometheus
+    volumes:
+      - grafana:/var/lib/grafana
+    networks:
+      - cinemahouse-network
+
+#  minio:
+#    image: bitnami/minio:latest
+#    container_name: minio
+#    environment:
+#      MINIO_ROOT_USER: admin
+#      MINIO_ROOT_PASSWORD: admin@2025
+#    volumes:
+#      - ./big_data:/bitnami/minio/data
+#      - ./config:/opt/bitnami/minio/config
+#    ports:
+#      - '9000:9000'
+#      - '9001:9001'
+#    command: minio server /bitnami/minio/data --console-address ":9001"
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+#      interval: 30s
+#      retries: 3
+#      start_period: 30s
+#      timeout: 10s
 networks:
   cinemahouse-network:
     driver: bridge
@@ -140,5 +141,6 @@ volumes:
     driver: local
   config:
     driver: local
+  grafana:
 
 
