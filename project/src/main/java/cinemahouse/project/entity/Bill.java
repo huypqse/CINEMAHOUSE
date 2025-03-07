@@ -38,6 +38,10 @@ public class Bill extends AbstractEntity<Long> {
     @JoinColumn(name = "user_id", nullable = false)
     User user;
 
+    @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    Payment payment;
+    @Column(name = "request_id")
+    private String requestId;
     @OneToMany(mappedBy = "bill", cascade = {
             CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
