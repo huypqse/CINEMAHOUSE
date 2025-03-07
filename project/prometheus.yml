@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+#dau tien la chi so interval 15s se quet 1 lan
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9091"]
+  - job_name: 'cinemahouse-app'#giám sát bên backend
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'cinemahouse-app:9090' ]
+        labels:
+          application: 'Cinemahouse Service'
