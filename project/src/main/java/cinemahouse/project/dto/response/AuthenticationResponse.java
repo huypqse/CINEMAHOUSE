@@ -1,9 +1,11 @@
 package cinemahouse.project.dto.response;
 
+import cinemahouse.project.dto.RoleDTO;
 import cinemahouse.project.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -15,6 +17,6 @@ import java.util.Set;
 public class AuthenticationResponse {
 
     String token;
-    Set<Role> roles;
+    List<RoleDTO> roles;
     boolean authenticated;
 }
