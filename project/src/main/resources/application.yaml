@@ -1,13 +1,27 @@
 server:
   port: 9090
-  servlet:
-    context-path: /cinemahouse
+#  servlet:
+#    context-path: /cinemahouse
 
 spring:
   application:
     name: cinemahouse-service
   profiles:
     active: @spring.profiles.active@
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'  # Đã mở tất cả endpoints, nhưng có thể chỉ định cụ thể
+  endpoint:
+    prometheus:
+      enabled: true  # Bật endpoint /actuator/prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+#pomethus sẽ nhận thong tin ứng dụng của chúng ta dựa vào metrics
 #  autoconfigure:
 #    exclude:
 #      - org.springframework.boot.autoconfigure.sendgrid.SendGridAutoConfiguration
