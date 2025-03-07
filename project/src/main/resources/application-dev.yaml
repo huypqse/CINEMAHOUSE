@@ -38,14 +38,7 @@ spring:
     #      repositories:
     #        enabled: true
 
-  kafka:
-      bootstrap-servers: localhost:9094
-      consumer:
-        group-id: my-consumer-group
-        auto-offset-reset: earliest
-      producer:
-        key-serializer: org.apache.kafka.common.serialization.StringSerializer
-        value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
   jpa:
       hibernate:
         ddl-auto: update  # Hoặc 'create-drop' tùy theo yêu cầu
@@ -71,6 +64,14 @@ jwt:
 #      secret-key: admin@2025
 #      url: http://localhost:9000 # Updated for Docker
 
+payment:
+  vnpay:
+    tmn-code: ${VNPAY_TMN_CODE:DUMMY-VNPAY_TMN_CODE}
+    secret-key: ${VNPAY_SECRET_KEY:DUMMY-VNPAY_SECRET_KEY}
+    init-payment-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html #cai link nay de fe redirect sang url nay, lien ket do tao ra payment request
+    return-url: https://dev.cinemahouse.com/order/%s/status #khi giao dich xong thi redirect lai sang trang minh
+    timeout: 15 # in minutes
+
 
 logging:
     level:
@@ -82,6 +83,7 @@ logging:
               sql:
                 BasicBinder: TRACE
 
+      springframework.security: DEBUG
 springdoc:
   api-docs:
     enabled: true
@@ -92,4 +94,5 @@ openapi:
     api-docs: cinema-api # Ensure this key matches the Java class
     title: Backend API Document
     version: v1.1.0
-    server: http://localhost:${server.port}/cinemahouse  # Use an IP address when deploying to the cloud
+#    server: http://localhost:${server.port}/cinemahouse  # Use an IP address when deploying to the cloud
+    server: http://localhost:${server.port}
