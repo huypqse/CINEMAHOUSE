@@ -1,7 +1,6 @@
 package cinemahouse.project.service;
 
 import cinemahouse.project.constant.PredefinedRole;
-import cinemahouse.project.dto.event.NotificationEvent;
 import cinemahouse.project.dto.request.*;
 import cinemahouse.project.dto.response.UserResponse;
 import cinemahouse.project.dto.response.VerifyOtpResponse;
@@ -12,14 +11,12 @@ import cinemahouse.project.exception.ErrorCode;
 import cinemahouse.project.mapper.UserMapper;
 import cinemahouse.project.repository.RoleRepository;
 import cinemahouse.project.repository.UserRepository;
-import cinemahouse.project.service.interfaces.EmailService;
 import cinemahouse.project.service.interfaces.UserService;
 import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,7 +41,6 @@ public class UserServiceImpl implements UserService {
     RoleRepository roleRepository;
     EmailServiceImpl emailService;
     OtpService otpService;
-    KafkaTemplate<String, Object> kafkaTemplate;
 
     public boolean findByEmail( EmailRequest request){
         return userRepository.existsByEmail(request.getEmail());
@@ -73,16 +69,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         otpService.deleteOtp(request.getEmail());
-
-        NotificationEvent event = NotificationEvent.builder()
-                .channel("EMAIL")
-                .recipient(user.getEmail())
-                .templateCode("welcome-email")
-                .subject("Welcome to CINEMA-HOUSE")
-                .build();
-
-        kafkaTemplate.send("notification-delivery", event);
-
         return userMapper.toUserResponse(user);
     }
 
