@@ -51,18 +51,12 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.6.0</version>
 		</dependency>
-<!--		&lt;!&ndash; MySQL Database Driver &ndash;&gt;-->
+
 <!--		<dependency>-->
-<!--			<groupId>mysql</groupId>-->
-<!--			<artifactId>mysql-connector-java</artifactId>-->
-<!--			<version>8.0.33</version>-->
-<!--			<scope>runtime</scope>-->
+<!--			<groupId>io.minio</groupId>-->
+<!--			<artifactId>minio</artifactId>-->
+<!--			<version>8.5.12</version>-->
 <!--		</dependency>-->
-		<dependency>
-			<groupId>io.minio</groupId>
-			<artifactId>minio</artifactId>
-			<version>8.5.12</version>
-		</dependency>
 		    <dependency>
 		      <groupId>org.postgresql</groupId>
 		      <artifactId>postgresql</artifactId>
@@ -78,10 +72,6 @@
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -93,16 +83,42 @@
 			<artifactId>sendgrid-java</artifactId>
 			<version>4.9.3</version>
 		</dependency>
+		<!-- Spring Boot WebSocket Starter (Tự động kéo các dependency liên quan) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+
+		<!-- SockJS -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>sockjs-client</artifactId>
+			<version>1.5.1</version>
+		</dependency>
+
+		<!-- STOMP Client -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>stomp-websocket</artifactId>
+			<version>2.3.4</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+		<!-- Health check -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>3.4.1</version>
 		</dependency>
+		<!-- Monitoring -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -151,12 +167,12 @@
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<version>4.4.1</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
+
 	</dependencies>
 	<profiles>
 		<!-- Profile Development -->
@@ -292,6 +308,34 @@
 					</java>
 				</configuration>
 			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>com.google.cloud.tools</groupId>-->
+<!--				<artifactId>jib-maven-plugin</artifactId>-->
+<!--				<version>2.8.0</version>-->
+<!--				<configuration>-->
+<!--					<from>-->
+<!--						<image>openjdk:17-alpine</image>-->
+<!--					</from>-->
+<!--					<to>-->
+<!--						<image>${image.path}/${project.artifactId}:20241213</image>-->
+<!--						&lt;!&ndash; Setting dockerhub account &ndash;&gt;-->
+<!--						<auth>-->
+<!--							&lt;!&ndash;suppress UnresolvedMavenProperty &ndash;&gt;-->
+<!--							<username>${env.DOCKER_USERNAME}</username>-->
+<!--							&lt;!&ndash;suppress UnresolvedMavenProperty &ndash;&gt;-->
+<!--							<password>${env.DOCKER_PASSWORD}</password>-->
+<!--						</auth>-->
+<!--					</to>-->
+<!--					<container>-->
+<!--						<ports>-->
+<!--							<port>8080</port>-->
+<!--						</ports>-->
+<!--						<environment>-->
+<!--							<SPRING_PROFILES_ACTIVE>prod</SPRING_PROFILES_ACTIVE>-->
+<!--						</environment>-->
+<!--					</container>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
 		</plugins>
 		<finalName>cinemahouse-service</finalName>
 	</build>
