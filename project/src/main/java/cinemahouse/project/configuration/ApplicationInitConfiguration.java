@@ -6,7 +6,7 @@ import cinemahouse.project.entity.status.*;
 import cinemahouse.project.exception.AppException;
 import cinemahouse.project.exception.ErrorCode;
 import cinemahouse.project.repository.*;
-import cinemahouse.project.repository.search.MovieSearchRepository;
+//import cinemahouse.project.repository.search.MovieSearchRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -73,7 +73,7 @@ public class ApplicationInitConfiguration {
     ApplicationRunner applicationRunner(UserRepository userRepository,
                                         RoleRepository roleRepository,
                                         MovieRepository movieRepository,
-                                        MovieSearchRepository movieSearchRepository,
+//                                        MovieSearchRepository movieSearchRepository,
                                         CinemaRepository cinemaRepository,
                                         ScreeningRoomRepository screeningRoomRepository,
                                         RoomTypeRepository roomTypeRepository,
