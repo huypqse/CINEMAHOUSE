@@ -9,10 +9,10 @@ spring:
   main:
     allow-bean-definition-overriding: true
   mail:
-      host: smtp.gmail.com
-      port: 587
-      username: dangkhoipham80@gmail.com
-      password: vraj fjew eskg vnpv
+      host: ${HOST_SMTP:DUMMY-HOST_SMTP}
+      port: ${PORT_SMTP:DUMMY-PORT_SMTP}
+      username: ${USERNAME_SMTP:DUMMY-USERNAME_SMTP}
+      password: ${PASSWORD_SMTP:DUMMY-PASSWORD_SMTP}
       properties:
         mail:
           smtp:
@@ -23,7 +23,7 @@ spring:
 #      uris: http://localhost:9200
   sendgrid:
     api-key: ${SENDGRID_API_KEY:DUMMY-SENDGRID_API_KEY}
-    from-email: huypqse@gmail.com
+    from-email: ${SENDGRID_FROM_EMAIL:DUMMY-SENDGRID_FROM_EMAIL}
 
 
   datasource:
@@ -48,14 +48,14 @@ spring:
 
 outbound:
     identity:
-      client-id: 1014016100667-asu46qq4b1qn8ms3hprim9i12kooavn0.apps.googleusercontent.com
-      client-secret: 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
-      redirect-uri: http://localhost:3000/authenticate
+      client-id: ${OUTBOUND_IDENTITY_CLIENT_ID:DUMMY-OUTBOUND_IDENTITY_CLIENT_ID}
+      client-secret: ${OUTBOUND_IDENTITY_CLIENT_SECRET:DUMMY-OUTBOUND_IDENTITY_CLIENT_SECRET}
+      redirect-uri: ${OUTBOUND_IDENTITY_REDIRECT_URI:DUMMY-OUTBOUND_IDENTITY_REDIRECT_URI}
 
 jwt:
-    signerKey: 1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij
-    valid-duration: 360000
-    refreshable-duration: 360000
+    signerKey: ${JWT_SIGNERKEY:DUMMY-JWT_SIGNERKEY}
+    valid-duration: ${JWT_VALID_DURATION:DUMMY-JWT_VALID_DURATION}
+    refreshable-duration: ${JWT_REFRESHABLE_DURATION:DUMMY-JWT_REFRESHABLE_DURATION}
 
 
 #integration:
