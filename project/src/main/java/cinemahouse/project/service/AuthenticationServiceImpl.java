@@ -31,6 +31,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,6 +55,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     OutboundUserClient outboundUserClient;
     RoleRepository roleRepository;
     RoleMapper roleMapper;
+    RedisTemplate<String, String> redisTemplate;
+    private static final String BLACKLIST_PREFIX = "blacklist:";
+
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
@@ -137,19 +142,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
-
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getEmail())
-                .issuer("learning.com")
+                .issuer("cinemahouse.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(VALID_DURATION, ChronoUnit.HOURS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
-
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-
         JWSObject jwsObject = new JWSObject(header, payload);
 
         try {
@@ -160,27 +162,48 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new RuntimeException(e);
         }
     }
-    @Override
-    public void logout(LogoutRequest request) throws ParseException, JOSEException {
-        try {
-            var signToken = verifyToken(request.getToken(), true);
+//    @Override
+//    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+//        try {
+//            var signToken = verifyToken(request.getToken(), true);
+//
+//            String jit = signToken.getJWTClaimsSet().getJWTID();
+//            Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+//
+//            if (!invalidatedTokenRepository.existsById(jit)) {
+//                InvalidatedToken invalidatedToken =
+//                        InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+//
+//                invalidatedTokenRepository.save(invalidatedToken);
+//            } else {
+//                log.info("Token has already been invalidated");
+//            }
+//
+//        } catch (AppException exception) {
+//            log.info("Token already expired or invalid");
+//        }
+//    }
+@Override
+public void logout(LogoutRequest request) throws ParseException, JOSEException {
+    try {
+        var signToken = verifyToken(request.getToken(), true);
 
-            String jit = signToken.getJWTClaimsSet().getJWTID();
-            Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+        String jit = signToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+        long ttl = (expiryTime.getTime() - System.currentTimeMillis()) / 1000; // Convert to seconds
 
-            if (!invalidatedTokenRepository.existsById(jit)) {
-                InvalidatedToken invalidatedToken =
-                        InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
-
-                invalidatedTokenRepository.save(invalidatedToken);
-            } else {
-                log.info("Token has already been invalidated");
-            }
-
-        } catch (AppException exception) {
-            log.info("Token already expired or invalid");
+        if (ttl > 0) {
+            redisTemplate.opsForValue().set("blacklist:" + jit, "blacklisted", ttl, TimeUnit.SECONDS);
+            log.info("Token {} added to blacklist", jit);
+        } else {
+            log.info("Token has already expired, no need to blacklist");
         }
+
+    } catch (AppException exception) {
+        log.info("Token already expired or invalid");
     }
+}
+
     @Override
     public SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
         if (token == null || token.trim().isEmpty()) {
@@ -206,7 +229,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var verified = signedJWT.verify(verifier);
         if (!verified) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+        Boolean isBlacklisted = redisTemplate.hasKey("blacklist:" + signedJWT.getJWTClaimsSet().getJWTID());
+        if (Boolean.TRUE.equals(isBlacklisted))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         return signedJWT;
@@ -249,6 +273,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .scope(scope)
                 .build();
     }
+
+
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
 
