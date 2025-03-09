@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-//    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @Override
     public List<UserResponse> getAllUsers(){
         return userRepository.findAll()
