@@ -1,0 +1,141 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'MAVEN'
+    }
+
+    environment {
+        DB_HOST = 'aws-0-ap-southeast-1.pooler.supabase.com'
+        DB_PORT = '5432'
+        DB_NAME = 'postgres'
+
+        APP_NAME = "backend-service"
+        RELEASE = "1.0.0"
+        IMAGE_NAME = "huypqse/${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Clean workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
+        stage("Checkout from SCM") {
+            steps {
+                git branch: 'main', credentialsId: 'GitHub', url: 'https://github.com/huypqse/CI-CD-pipeline.git'
+            }
+        }
+
+        stage("Check Workspace") {
+            steps {
+                sh 'ls -la'
+            }
+        }
+
+        stage("Test Application") {
+            steps {
+                dir('ci-cd') {
+                    withCredentials([usernamePassword(credentialsId: 'database-credentials', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASS')]) {
+                        sh """
+                            mvn clean test \
+                            -Dspring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME} \
+                            -Dspring.datasource.username=${DB_USER} \
+                            -Dspring.datasource.password=${DB_PASS}
+                        """
+                    }
+                }
+            }
+        }
+
+        stage("Build Application") {
+            steps {
+                dir('ci-cd') {
+                    withCredentials([usernamePassword(credentialsId: 'database-credentials', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASS')]) {
+                        sh """
+                            mvn clean package \
+                            -Dspring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME} \
+                            -Dspring.datasource.username=${DB_USER} \
+                            -Dspring.datasource.password=${DB_PASS}
+                        """
+                    }
+                }
+            }
+        }
+
+        stage("Build & Push Docker Image") {
+            steps {
+                dir('ci-cd') {
+                    withCredentials([usernamePassword(credentialsId: 'Dockerhub1', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+
+                        sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f Dockerfile ."
+                        sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest"
+                        sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                        sh "docker push ${IMAGE_NAME}:latest"
+                        sh 'docker logout'
+                    }
+                }
+            }
+        }
+
+       stage('Deploy to AWS EC2') {
+    steps {
+        script {
+            withCredentials([
+                sshUserPrivateKey(credentialsId: 'aws-ec2-key', keyFileVariable: 'SSH_KEY'),
+                string(credentialsId: 'ec2-host', variable: 'EC2_HOST'),
+                string(credentialsId: 'ec2-user', variable: 'EC2_USER'),
+                usernamePassword(credentialsId: 'Dockerhub1', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS'),
+                usernamePassword(credentialsId: 'database-credentials', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASSWORD')
+            ]) {
+                echo "Starting deployment to EC2..."
+
+                sh """
+                ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${EC2_USER}@${EC2_HOST} << 'ENDSSH'
+                echo "Logging in to Docker Hub..."
+                echo "${DOCKER_PASS}" | sudo docker login -u "${DOCKER_USER}" --password-stdin
+
+                echo "Stopping and removing old container if exists..."
+                sudo docker stop ${APP_NAME} || true
+                sudo docker rm ${APP_NAME} || true
+
+                echo "Pulling new image: ${IMAGE_NAME}:${IMAGE_TAG}"
+                sudo docker pull ${IMAGE_NAME}:${IMAGE_TAG}
+
+                echo "Running new container..."
+                sudo docker run -d --name ${APP_NAME} \\
+                    -p 9090:9090 \\
+                    -e SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME} \\
+                    -e SPRING_DATASOURCE_USERNAME=${DB_USER} \\
+                    -e SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD} \\
+                    ${IMAGE_NAME}:${IMAGE_TAG}
+
+                echo "Cleaning up old images..."
+                sudo docker image prune -af --filter "until=24h"
+ENDSSH
+                """
+
+                echo "Application deployed successfully to EC2."
+            }
+        }
+    }
+}
+
+    }
+
+    post {
+        always {
+            echo "CI/CD Pipeline execution completed"
+            deleteDir()
+        }
+        success {
+            echo "CI/CD Pipeline executed successfully!"
+        }
+        failure {
+            echo "CI/CD Pipeline execution failed!"
+        }
+    }
+}
